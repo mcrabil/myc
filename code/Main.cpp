@@ -445,6 +445,27 @@ void generate(AST_Node *node)
     }
 }
 
+/*
+
+int accept(Symbol s) {
+if (sym == s) {
+nextsym();
+return 1;
+}
+return 0;
+}
+
+int expect(Symbol s) {
+if (accept(s))
+return 1;
+error("expect: unexpected symbol");
+return 0;
+}
+
+
+*/
+
+
 // Project to look at : https://norasandler.com/2017/11/29/Write-a-Compiler.html
 // Compile using: i686-w64-mingw32-gcc -m32 .\mytest.s -o mytest.exe
 
@@ -463,7 +484,7 @@ int main()
     int ij = 7;
 
     FILE * file;
-    file = fopen("mytest.s", "w");
+    file = fopen("../code/mytest.s", "w");
     fwrite(outputStr, sizeof(char), outputStrIdx, file);
     fclose(file);
 

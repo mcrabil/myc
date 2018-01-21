@@ -32,7 +32,7 @@ class Lexer
 {
 public:
 
-    char *text = (char *)"int main ( ) { return 2; }";
+    char *text = 0;
     int totalTextLen = 0;
     int textPos = 0;
     Token currentToken = {};
@@ -171,7 +171,7 @@ public:
     void getNextToken()
     {
         //Eat Whitespace
-        while ((text[textPos] == ' ') || (text[textPos] == '\t') || (text[textPos] == '\n'))
+        while ((text[textPos] == ' ') || (text[textPos] == '\t') || (text[textPos] == '\r') || (text[textPos] == '\n'))
         {
             textPos++;
         }

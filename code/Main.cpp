@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-
 #include "Lexer.cpp"
 #include "Parser.cpp"
 #include "Codegen.cpp"
@@ -33,14 +32,36 @@ return 0;
 
 */
 
+char *read_file()
+{
+    FILE * file;
+    file = fopen("../stage_1/valid/return_2.c", "r");
+    fseek(file, 0, SEEK_END);
+    int size = ftell(file);
+    fseek(file, 0, SEEK_SET);
+
+    char *buf = (char *)malloc(size * sizeof(char));
+    buf[0] = 0;
+    fread(buf, sizeof(char), size, file);
+
+    fclose(file);
+
+    return buf;
+}
 
 // Project to look at : https://norasandler.com/2017/11/29/Write-a-Compiler.html
 // Compile using: i686-w64-mingw32-gcc -m32 .\mytest.s -o mytest.exe
 
+
+//TODO: why are there junk characters at the end of reading the file?
+
 int main()
 {
+    //lexer.text = (char *)"int main ( ) { return 2; }";
+    lexer.text = read_file();
     lexer.totalTextLen = strlen(lexer.text);
 
+    parser.lexer = lexer;
     parser.pretty_print_ast();
 
     AST_Node *node = parser.program();

@@ -43,12 +43,37 @@ AST_Node *Parser::statement()
 
 AST_Node *Parser::exp()
 {
-    expect(TOK_INTLITERAL);
-
+    lexer.getNextToken();
     AST_Node *node = (AST_Node *)malloc(sizeof(AST_Node));
-    node->type = AST_CONSTANT;
-    node->tokValue = lexer.currentToken;
-    node->child = 0;
+    if (lexer.currentToken.type == TOK_INTLITERAL)
+    {
+        node->type = AST_CONSTANT;
+        node->tokValue = lexer.currentToken;
+        node->child = 0;
+    }
+    else if (lexer.currentToken.type == TOK_NEGATION)
+    {
+        node->type = AST_UNOP;
+        node->tokValue = lexer.currentToken;
+        node->child = exp();
+    }
+    else if (lexer.currentToken.type == TOK_BITWISE_COMP)
+    {
+        node->type = AST_UNOP;
+        node->tokValue = lexer.currentToken;
+        node->child = exp();
+    }
+    else if (lexer.currentToken.type == TOK_LOGICAL_NEG)
+    {
+        node->type = AST_UNOP;
+        node->tokValue = lexer.currentToken;
+        node->child = exp();
+    }
+    else
+    {
+        lexer.error();
+    }
+
 
     return node;
 }

@@ -15,6 +15,7 @@ enum AST_Type
     AST_FUNCTION,
     AST_RETURN,
     AST_CONSTANT,
+    AST_UNOP,
 };
 
 struct AST_Node

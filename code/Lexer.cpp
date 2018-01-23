@@ -44,6 +44,18 @@ void Lexer::print_token()
         {
             printf("MAIN\n");
         } break;
+        case TOK_NEGATION:
+        {
+            printf("NEGATION\n");
+        } break;
+        case TOK_BITWISE_COMP:
+        {
+            printf("BITWISE_COMP\n");
+        } break;
+        case TOK_LOGICAL_NEG:
+        {
+            printf("LOGICAL_NEG\n");
+        } break;
         case TOK_EOTF:
         {
             printf("EOTF\n");
@@ -159,6 +171,24 @@ void Lexer::getNextToken()
     else if (text[textPos] == '}')
     {
         currentToken.type = TOK_RBRACE;
+        currentToken.value = 0;
+        textPos++;
+    }
+    else if (text[textPos] == '-')
+    {
+        currentToken.type = TOK_NEGATION;
+        currentToken.value = 0;
+        textPos++;
+    }
+    else if (text[textPos] == '~')
+    {
+        currentToken.type = TOK_BITWISE_COMP;
+        currentToken.value = 0;
+        textPos++;
+    }
+    else if (text[textPos] == '!')
+    {
+        currentToken.type = TOK_LOGICAL_NEG;
         currentToken.value = 0;
         textPos++;
     }

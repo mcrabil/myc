@@ -16,6 +16,9 @@ enum Token_Type
     TOK_IDENTIFIER,
     TOK_INTLITERAL,
     TOK_MAIN,
+    TOK_NEGATION,
+    TOK_BITWISE_COMP,
+    TOK_LOGICAL_NEG,
     TOK_EOTF,
 };
 

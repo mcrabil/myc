@@ -50,6 +50,9 @@ int main(int argc, char **argv)
 
     int ij = 7;
 
+
+    //TODO: finish codegen article 2
+
     /*
     FILE * file;
     file = fopen("../code/mytest.s", "w");

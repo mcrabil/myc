@@ -10,10 +10,10 @@ Lexer lexer;
 Parser parser;
 Codegen codegen;
 
-char *read_file()
+void read_input_file(char *fileName)
 {
     FILE * file;
-    file = fopen("../stage_1/valid/return_2.c", "rb");
+    file = fopen(fileName, "rb");
     fseek(file, 0, SEEK_END);
     int size = ftell(file);
     fseek(file, 0, SEEK_SET);
@@ -25,17 +25,19 @@ char *read_file()
 
     fclose(file);
 
-    return buf;
+    lexer.text = buf;
+    lexer.totalTextLen = size;
 }
 
 // Project to look at : https://norasandler.com/2017/11/29/Write-a-Compiler.html
 // Compile using: i686-w64-mingw32-gcc -m32 .\mytest.s -o mytest.exe
 
-int main()
+int main(int argc, char **argv)
 {
-    //lexer.text = (char *)"int main ( ) { return 2; }";
-    lexer.text = read_file();
-    lexer.totalTextLen = strlen(lexer.text);
+    char *inputFile = (char *)"../stage_1/valid/return_2.c";
+    if (argc >= 2) { inputFile = argv[1]; }
+
+    read_input_file(inputFile);
 
     parser.lexer = lexer;
     parser.pretty_print_ast();
@@ -48,10 +50,12 @@ int main()
 
     int ij = 7;
 
+    /*
     FILE * file;
     file = fopen("../code/mytest.s", "w");
     fwrite(codegen.outputStr, sizeof(char), codegen.outputStrIdx, file);
     fclose(file);
+    */
 
     free(codegen.outputStr);
 

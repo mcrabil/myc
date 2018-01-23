@@ -1,5 +1,11 @@
 #include "Codegen.h"
 
+void Codegen::addToOutputString(char *str)
+{
+    strcat((outputStr + outputStrIdx), str);
+    outputStrIdx += strlen(str);
+}
+
 void Codegen::generate(AST_Node *node)
 {
     switch (node->type)
@@ -11,32 +17,47 @@ void Codegen::generate(AST_Node *node)
         case AST_FUNCTION:
         {
             //Function name
-            strcat((outputStr + outputStrIdx), ".globl ");
-            outputStrIdx += strlen(".globl ");
-            strcat((outputStr + outputStrIdx), "_main\n_main:\n");
-            outputStrIdx += strlen("_main\n_main:\n");
+            addToOutputString((char *)".globl ");
+            addToOutputString((char *)"_main\n_main:\n");
 
             generate(node->child);
 
         } break;
         case AST_RETURN:
         {
-            strcat((outputStr + outputStrIdx), "movl $");
-            outputStrIdx += strlen("movl $");
+            addToOutputString((char *)"movl $");
 
             generate(node->child);
 
-            strcat((outputStr + outputStrIdx), ", %eax\nret\n");
-            outputStrIdx += strlen(", %eax\nret\n");
-
+            addToOutputString((char *)", %eax\nret\n");
         } break;
         case AST_CONSTANT:
         {
             char buffer[33];
             //CLEANUP: fix in case the length is longer than 33.
             _itoa(node->tokValue.value, buffer, 10);
-            strcat((outputStr + outputStrIdx), buffer);
-            outputStrIdx += strlen(buffer);
+            addToOutputString(buffer);
+        } break;
+        case AST_UNOP:
+        {
+            if (node->tokValue.type == TOK_NEGATION)
+            {
+                generate(node->child);
+                addToOutputString((char *)"neg %eax\n");
+            }
+            else if (node->tokValue.type == TOK_BITWISE_COMP)
+            {
+                generate(node->child);
+                addToOutputString((char *)"not %eax\n");
+            }
+            else if (node->tokValue.type == TOK_LOGICAL_NEG)
+            {
+                generate(node->child);
+                addToOutputString((char *)"cmpl $0, %eax\n");
+                addToOutputString((char *)"movl $0, %eax\n");
+                addToOutputString((char *)"sete %al\n");
+            }
+
         } break;
         default:
         {

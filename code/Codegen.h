@@ -10,4 +10,7 @@ public:
     int outputStrIdx = 0;
 
     void generate(AST_Node *node);
+
+private:
+    void addToOutputString(char *str);
 };

@@ -59,5 +59,7 @@ int main(int argc, char **argv)
 
     free(codegen.outputStr);
 
+    printf("Parsed successfully!\n");
+
     return 0;
 }

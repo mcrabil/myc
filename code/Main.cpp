@@ -53,12 +53,13 @@ int main(int argc, char **argv)
 
     //TODO: finish codegen article 2
 
-    /*
-    FILE * file;
-    file = fopen("../code/mytest.s", "w");
-    fwrite(codegen.outputStr, sizeof(char), codegen.outputStrIdx, file);
-    fclose(file);
-    */
+    if (argc >= 3)
+    {
+        FILE * file;
+        file = fopen(argv[2], "w");
+        fwrite(codegen.outputStr, sizeof(char), codegen.outputStrIdx, file);
+        fclose(file);
+    }
 
     free(codegen.outputStr);
 

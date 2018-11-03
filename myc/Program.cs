@@ -32,7 +32,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_2/valid/bitwise.c";
+            string inputFile = "../../../stage_3/valid/unop_add.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 

@@ -18,9 +18,13 @@ namespace myc
         Identifier,
         IntLiteral,
         Main,
-        Negation,
+        Minus,
         BitwiseComp,
         LogicalNeg,
+        Addition,
+        Multiplication,
+        Division,
+
         EOTF,
     };
 
@@ -31,5 +35,12 @@ namespace myc
         //possible values
         public int value;
         public string strval;
+
+        public static void CopyToken(Token toToken, Token fromToken)
+        {
+            toToken.type = fromToken.type;
+            toToken.value = fromToken.value;
+            toToken.strval = fromToken.strval;
+        }
     };
 }

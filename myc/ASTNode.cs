@@ -13,6 +13,7 @@ namespace myc
         Return,
         Constant,
         UnOp,
+        BinOp,
     };
 
     public class ASTNode
@@ -22,18 +23,24 @@ namespace myc
         public ASTNode child;
         public Token tokValue;
 
+        //Binary Ops
+        public ASTNode left;
+        public Token op;
+        public ASTNode right;
 
         public ASTNode()
         {
             tokValue = new Token();
+            op = new Token();
         }
-        /*AST_Node *left;
-        AST_Node *right;
 
-
-        union {
-            Token op;
-            Token tokValue;
-        };*/
+        public ASTNode(Token op, ASTNode left, ASTNode right, ASTType type)
+        {
+            tokValue = new Token();
+            this.op = op;
+            this.left = left;
+            this.right = right;
+            this.type = type;
+        }
     };
 }

@@ -8,88 +8,10 @@ namespace myc
         public string text;
         public int totalTextLen = 0;
         public int textPos = 0;
-        public Token currentToken = new Token();
 
-        public void PrintToken()
+        public void PrintToken(Token token)
         {
-            switch (currentToken.type)
-            {
-                case TokenType.LBrace:
-                    {
-                        Console.WriteLine("LBRACE" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.RBrace:
-                    {
-                        Console.WriteLine("RBRACE" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.LParen:
-                    {
-                        Console.WriteLine("LPAREN" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.RParen:
-                    {
-                        Console.WriteLine("RPAREN" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.Semi:
-                    {
-                        Console.WriteLine("SEMI" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.IntKeyword:
-                    {
-                        Console.WriteLine("INTKEYWORD" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.Ret:
-                    {
-                        Console.WriteLine("RET" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.Identifier:
-                    {
-                        Console.WriteLine("IDENTIFIER" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.IntLiteral:
-                    {
-                        Console.WriteLine("INTLITERAL" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.Main:
-                    {
-                        Console.WriteLine("MAIN" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.Negation:
-                    {
-                        Console.WriteLine("NEGATION" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.BitwiseComp:
-                    {
-                        Console.WriteLine("BITWISE_COMP" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.LogicalNeg:
-                    {
-                        Console.WriteLine("LOGICAL_NEG" + Environment.NewLine);
-                        break;
-                    }
-                case TokenType.EOTF:
-                    {
-                        Console.WriteLine("EOTF" + Environment.NewLine);
-                        break;
-                    }
-                default:
-                    {
-                        Console.WriteLine("Undefined token!" + Environment.NewLine);
-                        break;
-                    }
-            }
+            Console.WriteLine(token.type.ToString());
         }
 
         private int MyAtoi()
@@ -103,20 +25,18 @@ namespace myc
             return result;
         }
 
-        private char Peek()
+        public Token PeekNextToken()
         {
-            int peekPos = textPos + 1;
-            if (peekPos > (totalTextLen - 1))
-            {
-                return (char)0;
-            }
-            return text[peekPos];
-
+            int currTextPos = textPos;
+            Token peek = GetNextToken();
+            textPos = currTextPos;
+            return peek;
         }
 
-        private void GetIdentifier()
+        private Token GetIdentifier()
         {
-            currentToken.type = TokenType.Identifier;
+            Token ident = new Token();
+            ident.type = TokenType.Identifier;
 
             int stringLen = 0;
             while (Char.IsLetterOrDigit(text[textPos + stringLen]))
@@ -126,18 +46,19 @@ namespace myc
 
             if (string.Equals(text.Substring(textPos, 3), "int"))
             {
-                currentToken.type = TokenType.IntKeyword;
+                ident.type = TokenType.IntKeyword;
             }
             else if (string.Equals(text.Substring(textPos, 4), "main"))
             {
-                currentToken.type = TokenType.Main;
+                ident.type = TokenType.Main;
             }
             else if (string.Equals(text.Substring(textPos, 6), "return"))
             {
-                currentToken.type = TokenType.Ret;
+                ident.type = TokenType.Ret;
             }
-            currentToken.strval = text.Substring(textPos, stringLen);
+            ident.strval = text.Substring(textPos, stringLen);
             textPos += stringLen;
+            return ident;
         }
 
         public void Error()
@@ -146,8 +67,9 @@ namespace myc
             System.Environment.Exit(1);
         }
 
-        public void GetNextToken()
+        public Token GetNextToken()
         {
+            Token nextToken = new Token();
             //Eat Whitespace
             while (char.IsWhiteSpace(text[textPos]))
             {
@@ -156,94 +78,103 @@ namespace myc
 
             if (Char.IsLetter(text[textPos]))
             {
-                GetIdentifier();
+                Token ident = GetIdentifier();
+                nextToken.type = ident.type;
+                nextToken.value = ident.value;
+                nextToken.strval = ident.strval;
             }
             else if (Char.IsDigit(text[textPos]))
             {
-                currentToken.type = TokenType.IntLiteral;
-                currentToken.value = MyAtoi();
+                nextToken.type = TokenType.IntLiteral;
+                nextToken.value = MyAtoi();
             }
             else if (text[textPos] == ';')
             {
-                currentToken.type = TokenType.Semi;
-                currentToken.value = 0;
+                nextToken.type = TokenType.Semi;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == '(')
             {
-                currentToken.type = TokenType.LParen;
-                currentToken.value = 0;
+                nextToken.type = TokenType.LParen;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == ')')
             {
-                currentToken.type = TokenType.RParen;
-                currentToken.value = 0;
+                nextToken.type = TokenType.RParen;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == '{')
             {
-                currentToken.type = TokenType.LBrace;
-                currentToken.value = 0;
+                nextToken.type = TokenType.LBrace;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == '}')
             {
-                currentToken.type = TokenType.RBrace;
-                currentToken.value = 0;
+                nextToken.type = TokenType.RBrace;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == '-')
             {
-                currentToken.type = TokenType.Negation;
-                currentToken.value = 0;
+                nextToken.type = TokenType.Minus;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == '~')
             {
-                currentToken.type = TokenType.BitwiseComp;
-                currentToken.value = 0;
+                nextToken.type = TokenType.BitwiseComp;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (text[textPos] == '!')
             {
-                currentToken.type = TokenType.LogicalNeg;
-                currentToken.value = 0;
+                nextToken.type = TokenType.LogicalNeg;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '+')
+            {
+                nextToken.type = TokenType.Addition;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '*')
+            {
+                nextToken.type = TokenType.Multiplication;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '/')
+            {
+                nextToken.type = TokenType.Division;
+                nextToken.value = 0;
                 textPos++;
             }
             else if (textPos == totalTextLen)
             {
-                currentToken.type = TokenType.EOTF;
-                currentToken.value = 0;
+                nextToken.type = TokenType.EOTF;
+                nextToken.value = 0;
             }
             else
             {
                 Error();
             }
-
+            return nextToken;
         }
 
         public void PrintAllTokens()
         {
             //Iterate over the tokens
-            GetNextToken();
-            PrintToken();
+            Token currentToken = GetNextToken();
+            PrintToken(currentToken);
             while (currentToken.type != TokenType.EOTF)
             {
-                GetNextToken();
-                PrintToken();
-            }
-        }
-
-        private void Eat(TokenType tokenType)
-        {
-            if (currentToken.type == tokenType)
-            {
-                GetNextToken();
-            }
-            else
-            {
-                Error();
+                currentToken = GetNextToken();
+                PrintToken(currentToken);
             }
         }
     }

@@ -40,7 +40,7 @@ namespace myc
                     }
                 case ASTType.UnOp:
                     {
-                        if (node.tokValue.type == TokenType.Negation)
+                        if (node.tokValue.type == TokenType.Minus)
                         {
                             Generate(node.child);
                             outputStr += "neg %eax" + Environment.NewLine;
@@ -56,6 +56,36 @@ namespace myc
                             outputStr += "cmpl $0, %eax" + Environment.NewLine;
                             outputStr += "movl $0, %eax" + Environment.NewLine;
                             outputStr += "sete %al" + Environment.NewLine;
+                        }
+                        break;
+                    }
+                case ASTType.BinOp:
+                    {
+                        Generate(node.left);
+                        outputStr += "push %eax" + Environment.NewLine;
+                        Generate(node.right);
+                        if(node.op.type == TokenType.Addition)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "addl %ecx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.Minus)
+                        {
+                            outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "pop %eax" + Environment.NewLine;
+                            outputStr += "subl %ecx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.Multiplication)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "imul %ecx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.Division)
+                        {
+                            outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "pop %eax" + Environment.NewLine;
+                            outputStr += "movl $0, %edx" + Environment.NewLine;
+                            outputStr += "idivl %ecx, %eax" + Environment.NewLine;
                         }
                         break;
                     }

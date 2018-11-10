@@ -24,6 +24,14 @@ namespace myc
         Addition,
         Multiplication,
         Division,
+        And,
+        Or,
+        Equal,
+        NotEqual,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual,
 
         EOTF,
     };

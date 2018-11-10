@@ -8,9 +8,14 @@ namespace myc
             <program> ::= <function>
             <function> ::= "int" <id> "(" ")" "{" <statement> "}"
             <statement> ::= "return" <exp> ";"
-            <exp> ::= <term> { ("+" | "-") <term> }
+            <exp> ::= <logical-and-exp> { "||" <logical-and-exp> }
+            <logical-and-exp> ::= <equality-exp> { "&&" <equality-exp> }
+            <equality-exp> ::= <relational-exp> { ("!=" | "==") <relational-exp> }
+            <relational-exp> ::= <additive-exp> { ("<" | ">" | "<=" | ">=") <additive-exp> }
+            <additive-exp> ::= <term> { ("+" | "-") <term> }
             <term> ::= <factor> { ("*" | "/") <factor> }
             <factor> ::= "(" <exp> ")" | <unary_op> <factor> | <int>
+            <unary_op> ::= "!" | "~" | "-"
         */
 
         public Lexer lexer = null;
@@ -59,6 +64,62 @@ namespace myc
         }
 
         private ASTNode Exp()
+        {
+            ASTNode logicalAndExp = LogicalAndExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.Or)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextLogicalAndExp = LogicalAndExp();
+                logicalAndExp = new ASTNode(op, logicalAndExp, nextLogicalAndExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return logicalAndExp;
+        }
+
+        private ASTNode LogicalAndExp()
+        {
+            ASTNode equalityExp = EqualityExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.And)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextEqualityExp = EqualityExp();
+                equalityExp = new ASTNode(op, equalityExp, nextEqualityExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return equalityExp;
+        }
+
+        private ASTNode EqualityExp()
+        {
+            ASTNode realationalExp = RelationalExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.NotEqual || next.type == TokenType.Equal)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextRelationalExp = RelationalExp();
+                realationalExp = new ASTNode(op, realationalExp, nextRelationalExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return realationalExp;
+        }
+
+        private ASTNode RelationalExp()
+        {
+            ASTNode additiveExp = AdditiveExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.LessThan || next.type == TokenType.GreaterThan || next.type == TokenType.LessThanOrEqual || next.type == TokenType.GreaterThanOrEqual)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextAdditiveExp = AdditiveExp();
+                additiveExp = new ASTNode(op, additiveExp, nextAdditiveExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return additiveExp;
+        }
+
+        private ASTNode AdditiveExp()
         {
             ASTNode term = Term();
             Token next = lexer.PeekNextToken();

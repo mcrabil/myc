@@ -130,12 +130,6 @@ namespace myc
                 nextToken.value = 0;
                 textPos++;
             }
-            else if (text[textPos] == '!')
-            {
-                nextToken.type = TokenType.LogicalNeg;
-                nextToken.value = 0;
-                textPos++;
-            }
             else if (text[textPos] == '+')
             {
                 nextToken.type = TokenType.Addition;
@@ -151,6 +145,60 @@ namespace myc
             else if (text[textPos] == '/')
             {
                 nextToken.type = TokenType.Division;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), "&&"))
+            {
+                nextToken.type = TokenType.And;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), "||"))
+            {
+                nextToken.type = TokenType.Or;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), "=="))
+            {
+                nextToken.type = TokenType.Equal;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), "!="))
+            {
+                nextToken.type = TokenType.NotEqual;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), "<="))
+            {
+                nextToken.type = TokenType.LessThanOrEqual;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), ">="))
+            {
+                nextToken.type = TokenType.GreaterThanOrEqual;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (text[textPos] == '!')
+            {
+                nextToken.type = TokenType.LogicalNeg;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '<')
+            {
+                nextToken.type = TokenType.LessThan;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '>')
+            {
+                nextToken.type = TokenType.GreaterThan;
                 nextToken.value = 0;
                 textPos++;
             }

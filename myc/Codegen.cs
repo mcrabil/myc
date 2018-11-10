@@ -87,6 +87,65 @@ namespace myc
                             outputStr += "movl $0, %edx" + Environment.NewLine;
                             outputStr += "idivl %ecx, %eax" + Environment.NewLine;
                         }
+                        else if(node.op.type == TokenType.Equal)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "sete %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.NotEqual)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setne %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.LessThan)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setl %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.LessThanOrEqual)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setle %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.GreaterThan)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setg %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.GreaterThanOrEqual)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setge %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.Or)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "orl %ecx, %eax" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setne %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.And)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "cmpl $0, %ecx" + Environment.NewLine;
+                            outputStr += "setne %cl" + Environment.NewLine;
+                            outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "setne %al" + Environment.NewLine;
+                            outputStr += "andb %cl, %al" + Environment.NewLine;
+                        }
                         break;
                     }
                 default:

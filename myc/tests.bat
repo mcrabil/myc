@@ -38,6 +38,18 @@ REM     ECHO %%i
 REM     myc.exe %%i
 REM )
 REM echo Invalid Stage 3 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_4\valid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Valid Stage 4 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_4\invalid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Invalid Stage 4 End
 
 REM ------------------- Stage 1 Test -------------------------
 
@@ -123,68 +135,167 @@ REM echo %ERRORLEVEL%
 
 REM ------------------- Stage 3 Test -------------------------
 
-myc.exe ..\..\..\stage_3\valid\add.c ..\..\..\test\add.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\add.s -o ..\..\..\test\add.exe
-..\..\..\test\add.exe
-echo expected 3
-echo %ERRORLEVEL%
+REM myc.exe ..\..\..\stage_3\valid\add.c ..\..\..\test\add.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\add.s -o ..\..\..\test\add.exe
+REM ..\..\..\test\add.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\associativity.c ..\..\..\test\associativity.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\associativity.s -o ..\..\..\test\associativity.exe
+REM ..\..\..\test\associativity.exe
+REM echo expected -4 
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\associativity_2.c ..\..\..\test\associativity_2.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\associativity_2.s -o ..\..\..\test\associativity_2.exe
+REM ..\..\..\test\associativity_2.exe
+REM echo expected 1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\div.c ..\..\..\test\div.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\div.s -o ..\..\..\test\div.exe
+REM ..\..\..\test\div.exe
+REM echo expected 2
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\mult.c ..\..\..\test\mult.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\mult.s -o ..\..\..\test\mult.exe
+REM ..\..\..\test\mult.exe
+REM echo expected 6
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\parens.c ..\..\..\test\parens.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\parens.s -o ..\..\..\test\parens.exe
+REM ..\..\..\test\parens.exe
+REM echo expected 14
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\precedence.c ..\..\..\test\precedence.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\precedence.s -o ..\..\..\test\precedence.exe
+REM ..\..\..\test\precedence.exe
+REM echo expected 14
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\sub.c ..\..\..\test\sub.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\sub.s -o ..\..\..\test\sub.exe
+REM ..\..\..\test\sub.exe
+REM echo expected -1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\sub_neg.c ..\..\..\test\sub_neg.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\sub_neg.s -o ..\..\..\test\sub_neg.exe
+REM ..\..\..\test\sub_neg.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\unop_add.c ..\..\..\test\unop_add.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\unop_add.s -o ..\..\..\test\unop_add.exe
+REM ..\..\..\test\unop_add.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_3\valid\unop_parens.c ..\..\..\test\unop_parens.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\unop_parens.s -o ..\..\..\test\unop_parens.exe
+REM ..\..\..\test\unop_parens.exe
+REM echo expected -3
+REM echo %ERRORLEVEL%
 
-myc.exe ..\..\..\stage_3\valid\associativity.c ..\..\..\test\associativity.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\associativity.s -o ..\..\..\test\associativity.exe
-..\..\..\test\associativity.exe
-echo expected -4 
-echo %ERRORLEVEL%
+REM ------------------- Stage 4 Test -------------------------
 
-myc.exe ..\..\..\stage_3\valid\associativity_2.c ..\..\..\test\associativity_2.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\associativity_2.s -o ..\..\..\test\associativity_2.exe
-..\..\..\test\associativity_2.exe
-echo expected 1
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\div.c ..\..\..\test\div.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\div.s -o ..\..\..\test\div.exe
-..\..\..\test\div.exe
-echo expected 2
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\mult.c ..\..\..\test\mult.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\mult.s -o ..\..\..\test\mult.exe
-..\..\..\test\mult.exe
-echo expected 6
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\parens.c ..\..\..\test\parens.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\parens.s -o ..\..\..\test\parens.exe
-..\..\..\test\parens.exe
-echo expected 14
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\precedence.c ..\..\..\test\precedence.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\precedence.s -o ..\..\..\test\precedence.exe
-..\..\..\test\precedence.exe
-echo expected 14
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\sub.c ..\..\..\test\sub.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\sub.s -o ..\..\..\test\sub.exe
-..\..\..\test\sub.exe
-echo expected -1
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\sub_neg.c ..\..\..\test\sub_neg.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\sub_neg.s -o ..\..\..\test\sub_neg.exe
-..\..\..\test\sub_neg.exe
-echo expected 3
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_3\valid\unop_add.c ..\..\..\test\unop_add.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\unop_add.s -o ..\..\..\test\unop_add.exe
-..\..\..\test\unop_add.exe
+myc.exe ..\..\..\stage_4\valid\and_false.c ..\..\..\test\and_false.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\and_false.s -o ..\..\..\test\and_false.exe
+..\..\..\test\and_false.exe
 echo expected 0
 echo %ERRORLEVEL%
 
-myc.exe ..\..\..\stage_3\valid\unop_parens.c ..\..\..\test\unop_parens.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\unop_parens.s -o ..\..\..\test\unop_parens.exe
-..\..\..\test\unop_parens.exe
-echo expected -3
+myc.exe ..\..\..\stage_4\valid\and_true.c ..\..\..\test\and_true.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\and_true.s -o ..\..\..\test\and_true.exe
+..\..\..\test\and_true.exe
+echo expected 1
 echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\eq_false.c ..\..\..\test\eq_false.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\eq_false.s -o ..\..\..\test\eq_false.exe
+..\..\..\test\eq_false.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\eq_true.c ..\..\..\test\eq_true.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\eq_true.s -o ..\..\..\test\eq_true.exe
+..\..\..\test\eq_true.exe
+echo expected 1
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\ge_false.c ..\..\..\test\ge_false.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\ge_false.s -o ..\..\..\test\ge_false.exe
+..\..\..\test\ge_false.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\ge_true.c ..\..\..\test\ge_true.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\ge_true.s -o ..\..\..\test\ge_true.exe
+..\..\..\test\ge_true.exe
+echo expected 1
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\le_false.c ..\..\..\test\le_false.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\le_false.s -o ..\..\..\test\le_false.exe
+..\..\..\test\le_false.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\le_true.c ..\..\..\test\le_true.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\le_true.s -o ..\..\..\test\le_true.exe
+..\..\..\test\le_true.exe
+echo expected 1
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\ne_false.c ..\..\..\test\ne_false.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\ne_false.s -o ..\..\..\test\ne_false.exe
+..\..\..\test\ne_false.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\ne_true.c ..\..\..\test\ne_true.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\ne_true.s -o ..\..\..\test\ne_true.exe
+..\..\..\test\ne_true.exe
+echo expected 1
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\or_false.c ..\..\..\test\or_false.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\or_false.s -o ..\..\..\test\or_false.exe
+..\..\..\test\or_false.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\or_true.c ..\..\..\test\or_true.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\or_true.s -o ..\..\..\test\or_true.exe
+..\..\..\test\or_true.exe
+echo expected 1
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\precedence.c ..\..\..\test\precedence.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\precedence.s -o ..\..\..\test\precedence.exe
+..\..\..\test\precedence.exe
+echo expected 1
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\precedence_2.c ..\..\..\test\precedence_2.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\precedence_2.s -o ..\..\..\test\precedence_2.exe
+..\..\..\test\precedence_2.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\precedence_3.c ..\..\..\test\precedence_3.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\precedence_3.s -o ..\..\..\test\precedence_3.exe
+..\..\..\test\precedence_3.exe
+echo expected 0
+echo %ERRORLEVEL%
+
+myc.exe ..\..\..\stage_4\valid\precedence_4.c ..\..\..\test\precedence_4.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\precedence_4.s -o ..\..\..\test\precedence_4.exe
+..\..\..\test\precedence_4.exe
+echo expected 1
+echo %ERRORLEVEL%
+

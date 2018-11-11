@@ -71,12 +71,17 @@ namespace myc
         {
             Token nextToken = new Token();
             //Eat Whitespace
-            while (char.IsWhiteSpace(text[textPos]))
+            while ((textPos < totalTextLen) && char.IsWhiteSpace(text[textPos]))
             {
                 textPos++;
             }
 
-            if (Char.IsLetter(text[textPos]))
+            if (textPos == totalTextLen)
+            {
+                nextToken.type = TokenType.EOTF;
+                nextToken.value = 0;
+            }
+            else if (Char.IsLetter(text[textPos]))
             {
                 Token ident = GetIdentifier();
                 nextToken.type = ident.type;
@@ -150,13 +155,13 @@ namespace myc
             }
             else if (string.Equals(text.Substring(textPos, 2), "&&"))
             {
-                nextToken.type = TokenType.And;
+                nextToken.type = TokenType.LogicalAnd;
                 nextToken.value = 0;
                 textPos += 2;
             }
             else if (string.Equals(text.Substring(textPos, 2), "||"))
             {
-                nextToken.type = TokenType.Or;
+                nextToken.type = TokenType.LogicalOr;
                 nextToken.value = 0;
                 textPos += 2;
             }
@@ -184,6 +189,42 @@ namespace myc
                 nextToken.value = 0;
                 textPos += 2;
             }
+            else if (string.Equals(text.Substring(textPos, 2), "<<"))
+            {
+                nextToken.type = TokenType.BitwiseShiftLeft;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (string.Equals(text.Substring(textPos, 2), ">>"))
+            {
+                nextToken.type = TokenType.BitwiseShiftRight;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if (text[textPos] == '%')
+            {
+                nextToken.type = TokenType.Modulo;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '&')
+            {
+                nextToken.type = TokenType.BitwiseAnd;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '|')
+            {
+                nextToken.type = TokenType.BitwiseOr;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '^')
+            {
+                nextToken.type = TokenType.BitwiseXor;
+                nextToken.value = 0;
+                textPos++;
+            }
             else if (text[textPos] == '!')
             {
                 nextToken.type = TokenType.LogicalNeg;
@@ -202,11 +243,6 @@ namespace myc
                 nextToken.value = 0;
                 textPos++;
             }
-            else if (textPos == totalTextLen)
-            {
-                nextToken.type = TokenType.EOTF;
-                nextToken.value = 0;
-            }
             else
             {
                 Error();
@@ -216,6 +252,8 @@ namespace myc
 
         public void PrintAllTokens()
         {
+            textPos = 0;
+
             //Iterate over the tokens
             Token currentToken = GetNextToken();
             PrintToken(currentToken);
@@ -224,6 +262,7 @@ namespace myc
                 currentToken = GetNextToken();
                 PrintToken(currentToken);
             }
+            textPos = 0;
         }
     }
 }

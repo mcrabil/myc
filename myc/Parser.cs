@@ -9,11 +9,15 @@ namespace myc
             <function> ::= "int" <id> "(" ")" "{" <statement> "}"
             <statement> ::= "return" <exp> ";"
             <exp> ::= <logical-and-exp> { "||" <logical-and-exp> }
-            <logical-and-exp> ::= <equality-exp> { "&&" <equality-exp> }
+            <logical-and-exp> ::= <bitwise-or-exp> { "&&" <bitwise-or-exp> }
+            <bitwise-or-exp> ::= <bitwise-xor-exp> { "|" <bitwise-xor-exp> }
+            <bitwise-xor-exp> ::= <bitwise-and-exp> { "^" <bitwise-and-exp> }
+            <bitwise-and-exp> ::= <equality-exp> { "&" <equality-exp> }
             <equality-exp> ::= <relational-exp> { ("!=" | "==") <relational-exp> }
-            <relational-exp> ::= <additive-exp> { ("<" | ">" | "<=" | ">=") <additive-exp> }
+            <relational-exp> ::= <bitwise-shift-exp> { ("<" | ">" | "<=" | ">=") <bitwise-shift-exp> }
+            <bitwise-shift-exp> ::= <additive-exp> { ("<<" | ">>") <additive-exp> }
             <additive-exp> ::= <term> { ("+" | "-") <term> }
-            <term> ::= <factor> { ("*" | "/") <factor> }
+            <term> ::= <factor> { ("*" | "/" | "%") <factor> }
             <factor> ::= "(" <exp> ")" | <unary_op> <factor> | <int>
             <unary_op> ::= "!" | "~" | "-"
         */
@@ -67,7 +71,7 @@ namespace myc
         {
             ASTNode logicalAndExp = LogicalAndExp();
             Token next = lexer.PeekNextToken();
-            while (next.type == TokenType.Or)
+            while (next.type == TokenType.LogicalOr)
             {
                 Token op = lexer.GetNextToken();
                 ASTNode nextLogicalAndExp = LogicalAndExp();
@@ -79,9 +83,51 @@ namespace myc
 
         private ASTNode LogicalAndExp()
         {
+            ASTNode bitwiseOrExp = BitwiseOrExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.LogicalAnd)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextBitwiseOrExp = BitwiseOrExp();
+                bitwiseOrExp = new ASTNode(op, bitwiseOrExp, nextBitwiseOrExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return bitwiseOrExp;
+        }
+
+        private ASTNode BitwiseOrExp()
+        {
+            ASTNode bitwiseXorExp = BitwiseXorExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.BitwiseOr)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextBitwiseOrExp = BitwiseXorExp();
+                bitwiseXorExp = new ASTNode(op, bitwiseXorExp, nextBitwiseOrExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return bitwiseXorExp;
+        }
+
+        private ASTNode BitwiseXorExp()
+        {
+            ASTNode bitwiseAndExp = BitwiseAndExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.BitwiseXor)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextBitwiseAndExp = BitwiseAndExp();
+                bitwiseAndExp = new ASTNode(op, bitwiseAndExp, nextBitwiseAndExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return bitwiseAndExp;
+        }
+
+        private ASTNode BitwiseAndExp()
+        {
             ASTNode equalityExp = EqualityExp();
             Token next = lexer.PeekNextToken();
-            while (next.type == TokenType.And)
+            while (next.type == TokenType.BitwiseAnd)
             {
                 Token op = lexer.GetNextToken();
                 ASTNode nextEqualityExp = EqualityExp();
@@ -107,9 +153,23 @@ namespace myc
 
         private ASTNode RelationalExp()
         {
-            ASTNode additiveExp = AdditiveExp();
+            ASTNode bitwiseShiftExp = BitwiseShiftExp();
             Token next = lexer.PeekNextToken();
             while (next.type == TokenType.LessThan || next.type == TokenType.GreaterThan || next.type == TokenType.LessThanOrEqual || next.type == TokenType.GreaterThanOrEqual)
+            {
+                Token op = lexer.GetNextToken();
+                ASTNode nextBitwiseShiftExp = BitwiseShiftExp();
+                bitwiseShiftExp = new ASTNode(op, bitwiseShiftExp, nextBitwiseShiftExp, ASTType.BinOp);
+                next = lexer.PeekNextToken();
+            }
+            return bitwiseShiftExp;
+        }
+
+        private ASTNode BitwiseShiftExp()
+        {
+            ASTNode additiveExp = AdditiveExp();
+            Token next = lexer.PeekNextToken();
+            while (next.type == TokenType.BitwiseShiftLeft || next.type == TokenType.BitwiseShiftRight)
             {
                 Token op = lexer.GetNextToken();
                 ASTNode nextAdditiveExp = AdditiveExp();
@@ -137,7 +197,7 @@ namespace myc
         {
             ASTNode factor = Factor();
             Token next = lexer.PeekNextToken();
-            while (next.type == TokenType.Multiplication || next.type == TokenType.Division)
+            while (next.type == TokenType.Multiplication || next.type == TokenType.Division || next.type == TokenType.Modulo)
             {
                 Token op = lexer.GetNextToken();
                 Token.CopyToken(op, next);

@@ -8,9 +8,6 @@ namespace myc
 {
     class Program
     {
-        //TODOS!!!:
-        //TODO: Week 4: implement other binary operators: Modulo, Bitwise AND, Bitwise OR, Bitwise XOR, Bitwise shift left, Bitwise shift right
-
         public Lexer lexer;
         public Parser parser;
         public Codegen codegen;
@@ -35,13 +32,15 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_4/valid/precedence_2.c";
+            string inputFile = "../../../stage_4/valid/and_false.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 
             prog.ReadInputFile(inputFile);
 
             prog.parser.lexer = prog.lexer;
+
+            //prog.lexer.PrintAllTokens();
 
             ASTNode node = prog.parser.Program();
             prog.codegen.Generate(node);

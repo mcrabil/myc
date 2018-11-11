@@ -129,14 +129,14 @@ namespace myc
                             outputStr += "movl $0, %eax" + Environment.NewLine;
                             outputStr += "setge %al" + Environment.NewLine;
                         }
-                        else if(node.op.type == TokenType.Or)
+                        else if(node.op.type == TokenType.LogicalOr)
                         {
                             outputStr += "pop %ecx" + Environment.NewLine;
                             outputStr += "orl %ecx, %eax" + Environment.NewLine;
                             outputStr += "movl $0, %eax" + Environment.NewLine;
                             outputStr += "setne %al" + Environment.NewLine;
                         }
-                        else if(node.op.type == TokenType.And)
+                        else if(node.op.type == TokenType.LogicalAnd)
                         {
                             outputStr += "pop %ecx" + Environment.NewLine;
                             outputStr += "cmpl $0, %ecx" + Environment.NewLine;
@@ -145,6 +145,41 @@ namespace myc
                             outputStr += "movl $0, %eax" + Environment.NewLine;
                             outputStr += "setne %al" + Environment.NewLine;
                             outputStr += "andb %cl, %al" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.Modulo)
+                        {
+                            outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "pop %eax" + Environment.NewLine;
+                            outputStr += "movl $0, %edx" + Environment.NewLine;
+                            outputStr += "idivl %ecx, %eax" + Environment.NewLine;
+                            outputStr += "movl %edx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.BitwiseAnd)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "andl %ecx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.BitwiseOr)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "orl %ecx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.BitwiseXor)
+                        {
+                            outputStr += "pop %ecx" + Environment.NewLine;
+                            outputStr += "xorl %ecx, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.BitwiseShiftLeft)
+                        {
+                            outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "pop %eax" + Environment.NewLine;
+                            outputStr += "shl %cl, %eax" + Environment.NewLine;
+                        }
+                        else if(node.op.type == TokenType.BitwiseShiftRight)
+                        {
+                            outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                            outputStr += "pop %eax" + Environment.NewLine;
+                            outputStr += "shr %cl, %eax" + Environment.NewLine;
                         }
                         break;
                     }

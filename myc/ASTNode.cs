@@ -11,9 +11,12 @@ namespace myc
         Program,
         Function,
         Return,
-        Constant,
-        UnOp,
+        Declare,
+        Assign,
+        Var,
         BinOp,
+        UnOp,
+        Constant,
     };
 
     public class ASTNode
@@ -23,10 +26,16 @@ namespace myc
         public ASTNode child;
         public Token tokValue;
 
+        //Function
+        public List<ASTNode> statements;
+
         //Binary Ops
         public ASTNode left;
         public Token op;
         public ASTNode right;
+
+        //Assign
+        public Token ident;
 
         public ASTNode()
         {

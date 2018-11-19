@@ -20,43 +20,51 @@ namespace myc
                         //Function name
                         outputStr += ".globl ";
                         outputStr += "_main" + Environment.NewLine + "_main:" + Environment.NewLine;
+                        outputStr += "push %ebp" + Environment.NewLine;
+                        outputStr += "movl %esp, %ebp" + Environment.NewLine;
 
-                        Generate(node.child);
+                        foreach(var statement in node.statements)
+                        {
+                            Generate(statement);
+                        }
                         break;
                     }
                 case ASTType.Return:
                     {
                         Generate(node.child);
 
+                        outputStr += "movl %ebp, %esp" + Environment.NewLine;
+                        outputStr += "pop %ebp" + Environment.NewLine;
                         outputStr += "ret" + Environment.NewLine;
                         break;
                     }
-                case ASTType.Constant:
+                case ASTType.Declare:
                     {
-                        outputStr += "movl $";
-                        outputStr += node.tokValue.value.ToString();
-                        outputStr += ", %eax" + Environment.NewLine;
+                        if(node.child != null)
+                        {
+                            Generate(node.child);
+                        }
+
+                        outputStr += "push %eax" + Environment.NewLine;
                         break;
                     }
-                case ASTType.UnOp:
+                case ASTType.Assign:
                     {
-                        if (node.tokValue.type == TokenType.Minus)
+                        if(!Program.varmap.ContainsKey(node.ident.strval))
                         {
-                            Generate(node.child);
-                            outputStr += "neg %eax" + Environment.NewLine;
+                            Program.Error("Variable undefined");
                         }
-                        else if (node.tokValue.type == TokenType.BitwiseComp)
+                        Generate(node.child);
+                        outputStr += "movl %eax, " + Program.varmap[node.ident.strval].ToString() + "(%ebp)" + Environment.NewLine;
+                        break;
+                    }
+                case ASTType.Var:
+                    {
+                        if(!Program.varmap.ContainsKey(node.tokValue.strval))
                         {
-                            Generate(node.child);
-                            outputStr += "not %eax" + Environment.NewLine;
+                            Program.Error("Undeclared var");
                         }
-                        else if (node.tokValue.type == TokenType.LogicalNeg)
-                        {
-                            Generate(node.child);
-                            outputStr += "cmpl $0, %eax" + Environment.NewLine;
-                            outputStr += "movl $0, %eax" + Environment.NewLine;
-                            outputStr += "sete %al" + Environment.NewLine;
-                        }
+                        outputStr += "movl " + Program.varmap[node.tokValue.strval].ToString() + "(%ebp), %eax" + Environment.NewLine;
                         break;
                     }
                 case ASTType.BinOp:
@@ -181,6 +189,34 @@ namespace myc
                             outputStr += "pop %eax" + Environment.NewLine;
                             outputStr += "shr %cl, %eax" + Environment.NewLine;
                         }
+                        break;
+                    }
+                case ASTType.UnOp:
+                    {
+                        if (node.tokValue.type == TokenType.Minus)
+                        {
+                            Generate(node.child);
+                            outputStr += "neg %eax" + Environment.NewLine;
+                        }
+                        else if (node.tokValue.type == TokenType.BitwiseComp)
+                        {
+                            Generate(node.child);
+                            outputStr += "not %eax" + Environment.NewLine;
+                        }
+                        else if (node.tokValue.type == TokenType.LogicalNeg)
+                        {
+                            Generate(node.child);
+                            outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                            outputStr += "movl $0, %eax" + Environment.NewLine;
+                            outputStr += "sete %al" + Environment.NewLine;
+                        }
+                        break;
+                    }
+                case ASTType.Constant:
+                    {
+                        outputStr += "movl $";
+                        outputStr += node.tokValue.value.ToString();
+                        outputStr += ", %eax" + Environment.NewLine;
                         break;
                     }
                 default:

@@ -8,9 +8,28 @@ namespace myc
 {
     class Program
     {
+        //TODO: week 5
+        //Compound assignment operators, comma opeerators, increment/decrement operators
+
         public Lexer lexer;
         public Parser parser;
         public Codegen codegen;
+
+        //Variable map
+        public static Dictionary<string, int> varmap = new Dictionary<string, int>();
+        public static int varidx = -4;
+
+        public static void Error()
+        {
+            Console.WriteLine("THERE WAS AN ERROR PARSING" + Environment.NewLine);
+            System.Environment.Exit(1);
+        }
+
+        public static void Error(string error)
+        {
+            Console.WriteLine(error + Environment.NewLine);
+            System.Environment.Exit(1);
+        }
 
         public Program()
         {
@@ -32,7 +51,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_4/valid/and_false.c";
+            string inputFile = "../../../stage_5/valid/undefined_missing_return.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 
@@ -42,7 +61,7 @@ namespace myc
 
             //prog.lexer.PrintAllTokens();
 
-            ASTNode node = prog.parser.Program();
+            ASTNode node = prog.parser.Prog();
             prog.codegen.Generate(node);
 
             //prog.parser.PrettyPrintAST(node);

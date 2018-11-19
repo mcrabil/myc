@@ -38,6 +38,7 @@ namespace myc
         BitwiseShiftLeft,
         BitwiseShiftRight,
         Modulo,
+        Assignment,
 
         EOTF,
     };

@@ -25,10 +25,14 @@ namespace myc
             return result;
         }
 
-        public Token PeekNextToken()
+        public Token PeekNextToken(int numTokens = 1)
         {
             int currTextPos = textPos;
-            Token peek = GetNextToken();
+            Token peek = new Token();
+            for(int i = 0; i < numTokens && (peek.type != TokenType.EOTF); i++)
+            {
+                 peek = GetNextToken();
+            }
             textPos = currTextPos;
             return peek;
         }
@@ -39,32 +43,26 @@ namespace myc
             ident.type = TokenType.Identifier;
 
             int stringLen = 0;
-            while (Char.IsLetterOrDigit(text[textPos + stringLen]))
+            while ((textPos + stringLen < totalTextLen) && Char.IsLetterOrDigit(text[textPos + stringLen]))
             {
                 stringLen++;
             }
 
-            if (string.Equals(text.Substring(textPos, 3), "int"))
+            if ((textPos + 3 < totalTextLen) && (stringLen == 3) && string.Equals(text.Substring(textPos, 3), "int"))
             {
                 ident.type = TokenType.IntKeyword;
             }
-            else if (string.Equals(text.Substring(textPos, 4), "main"))
+            else if ((textPos + 4 < totalTextLen) && (stringLen == 4) && string.Equals(text.Substring(textPos, 4), "main"))
             {
                 ident.type = TokenType.Main;
             }
-            else if (string.Equals(text.Substring(textPos, 6), "return"))
+            else if ((textPos + 6 < totalTextLen) && (stringLen == 6) && string.Equals(text.Substring(textPos, 6), "return"))
             {
                 ident.type = TokenType.Ret;
             }
             ident.strval = text.Substring(textPos, stringLen);
             textPos += stringLen;
             return ident;
-        }
-
-        public void Error()
-        {
-            Console.WriteLine("THERE WAS AN ERROR PARSING" + Environment.NewLine);
-            System.Environment.Exit(1);
         }
 
         public Token GetNextToken()
@@ -153,49 +151,49 @@ namespace myc
                 nextToken.value = 0;
                 textPos++;
             }
-            else if (string.Equals(text.Substring(textPos, 2), "&&"))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "&&"))
             {
                 nextToken.type = TokenType.LogicalAnd;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), "||"))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "||"))
             {
                 nextToken.type = TokenType.LogicalOr;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), "=="))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "=="))
             {
                 nextToken.type = TokenType.Equal;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), "!="))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "!="))
             {
                 nextToken.type = TokenType.NotEqual;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), "<="))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "<="))
             {
                 nextToken.type = TokenType.LessThanOrEqual;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), ">="))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), ">="))
             {
                 nextToken.type = TokenType.GreaterThanOrEqual;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), "<<"))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "<<"))
             {
                 nextToken.type = TokenType.BitwiseShiftLeft;
                 nextToken.value = 0;
                 textPos += 2;
             }
-            else if (string.Equals(text.Substring(textPos, 2), ">>"))
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), ">>"))
             {
                 nextToken.type = TokenType.BitwiseShiftRight;
                 nextToken.value = 0;
@@ -243,9 +241,15 @@ namespace myc
                 nextToken.value = 0;
                 textPos++;
             }
+            else if (text[textPos] == '=')
+            {
+                nextToken.type = TokenType.Assignment;
+                nextToken.value = 0;
+                textPos++;
+            }
             else
             {
-                Error();
+                Program.Error();
             }
             return nextToken;
         }

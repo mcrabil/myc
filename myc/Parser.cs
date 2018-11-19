@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace myc
 {
@@ -6,9 +7,12 @@ namespace myc
     {
         /*
             <program> ::= <function>
-            <function> ::= "int" <id> "(" ")" "{" <statement> "}"
+            <function> ::= "int" <id> "(" ")" "{" { <statement> } "}"
             <statement> ::= "return" <exp> ";"
-            <exp> ::= <logical-and-exp> { "||" <logical-and-exp> }
+                          | <exp> ";"
+                          | "int" <id> [ = <exp> ] ";"
+            <exp> ::= <id> "=" <exp> | <logical-or-exp>
+            <logical-or-exp> ::= <logical-and-exp> { "||" <logical-and-exp> }
             <logical-and-exp> ::= <bitwise-or-exp> { "&&" <bitwise-or-exp> }
             <bitwise-or-exp> ::= <bitwise-xor-exp> { "|" <bitwise-xor-exp> }
             <bitwise-xor-exp> ::= <bitwise-and-exp> { "^" <bitwise-and-exp> }
@@ -18,14 +22,14 @@ namespace myc
             <bitwise-shift-exp> ::= <additive-exp> { ("<<" | ">>") <additive-exp> }
             <additive-exp> ::= <term> { ("+" | "-") <term> }
             <term> ::= <factor> { ("*" | "/" | "%") <factor> }
-            <factor> ::= "(" <exp> ")" | <unary_op> <factor> | <int>
+            <factor> ::= "(" <exp> ")" | <unary_op> <factor> | <int> | <id>
             <unary_op> ::= "!" | "~" | "-"
         */
 
         public Lexer lexer = null;
 
 
-        public ASTNode Program()
+        public ASTNode Prog()
         {
             ASTNode node = new ASTNode();
             node.type = ASTType.Program;
@@ -36,6 +40,7 @@ namespace myc
 
         private ASTNode FunctionDeclaration()
         {
+            bool hasReturn = false;
             ASTNode node = new ASTNode();
             node.type = ASTType.Function;
 
@@ -46,7 +51,48 @@ namespace myc
             Expect(TokenType.RParen);
             Expect(TokenType.LBrace);
 
-            node.child = Statement();
+            node.statements = new List<ASTNode>();
+            Token next = lexer.PeekNextToken();
+            while(next.type != TokenType.RBrace)
+            {
+                ASTNode stmt = Statement();
+                node.statements.Add(stmt);
+                if(stmt.type == ASTType.Declare)
+                {
+                    if (Program.varmap.ContainsKey(stmt.ident.strval))
+                    {
+                        Program.Error("There was already a variable declared " + stmt.tokValue.strval);
+                    }
+                    Program.varmap.Add(stmt.ident.strval, Program.varidx);
+                    Program.varidx -= 4;
+                }
+                else if(stmt.type == ASTType.Assign)
+                {
+                    if (!Program.varmap.ContainsKey(stmt.ident.strval))
+                    {
+                        Program.Error("Variable has not been declared " + stmt.tokValue.strval);
+                    }
+
+                }
+                else if(stmt.type == ASTType.Return)
+                {
+                    hasReturn = true;
+                }
+                next = lexer.PeekNextToken();
+            }
+            if(!hasReturn)
+            {
+                ASTNode retNode = new ASTNode();
+                retNode.type = ASTType.Return;
+                retNode.tokValue = new Token();
+                retNode.tokValue.type = TokenType.Ret;
+                retNode.child = new ASTNode();
+                retNode.child.type = ASTType.Constant;
+                retNode.child.tokValue = new Token();
+                retNode.child.tokValue.type = TokenType.IntLiteral;
+                retNode.child.tokValue.value = 0;
+                node.statements.Add(retNode);
+            }
 
             Expect(TokenType.RBrace);
 
@@ -55,19 +101,71 @@ namespace myc
 
         private ASTNode Statement()
         {
-            Token currentToken = Expect(TokenType.Ret);
-
+            Token next = lexer.PeekNextToken();
             ASTNode node = new ASTNode();
-            node.type = ASTType.Return;
-            Token.CopyToken(node.tokValue, currentToken);
-            node.child = Exp();
+            if (next.type == TokenType.Ret)
+            {
+                Expect(TokenType.Ret);
 
-            Expect(TokenType.Semi);
+                node.type = ASTType.Return;
+                Token.CopyToken(node.tokValue, next);
+                node.child = Exp();
+
+                Expect(TokenType.Semi);
+            }
+            else if (next.type == TokenType.IntKeyword)
+            {
+                Expect(TokenType.IntKeyword);
+                Token ident = Expect(TokenType.Identifier);
+                next = lexer.PeekNextToken();
+                if(next.type == TokenType.Assignment)
+                {
+                    Expect(TokenType.Assignment);
+                    node.child = Exp();
+                    node.ident = ident;
+                    node.type = ASTType.Declare;
+                    Expect(TokenType.Semi);
+                }
+                else if (next.type == TokenType.Semi)
+                {
+                    node.ident = ident;
+                    node.type = ASTType.Declare;
+                    Expect(TokenType.Semi);
+                }
+                else
+                {
+                    Program.Error();
+                }
+            }
+            else
+            {
+                node = Exp();
+                Expect(TokenType.Semi);
+            }
 
             return node;
         }
 
         private ASTNode Exp()
+        {
+            ASTNode node = new ASTNode();
+            Token next = lexer.PeekNextToken();
+            if (next.type == TokenType.Identifier && lexer.PeekNextToken(2).type == TokenType.Assignment)
+            {
+                Expect(TokenType.Identifier);
+                Expect(TokenType.Assignment);
+                node.child = Exp();
+                node.ident = next;
+                node.type = ASTType.Assign;
+            }
+            else
+            {
+                node = LogicalOrExp();
+            }
+            return node;
+        }
+
+        private ASTNode LogicalOrExp()
         {
             ASTNode logicalAndExp = LogicalAndExp();
             Token next = lexer.PeekNextToken();
@@ -223,6 +321,12 @@ namespace myc
                 Token.CopyToken(node.tokValue, currentToken);
                 node.child = null;
             }
+            else if (currentToken.type == TokenType.Identifier)
+            {
+                node.type = ASTType.Var;
+                Token.CopyToken(node.tokValue, currentToken);
+                node.child = null;
+            }
             else if (currentToken.type == TokenType.Minus)
             {
                 node.type = ASTType.UnOp;
@@ -243,7 +347,7 @@ namespace myc
             }
             else
             {
-                lexer.Error();
+                Program.Error();
             }
 
             return node;
@@ -257,7 +361,7 @@ namespace myc
                 return currentToken;
             }
 
-            lexer.Error();
+            Program.Error();
 
             return currentToken;
         }

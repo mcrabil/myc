@@ -9,7 +9,7 @@ namespace myc
     class Program
     {
         //TODO: week 5
-        //Compound assignment operators, comma opeerators, increment/decrement operators
+        //Comma opeerators, increment/decrement operators
 
         public Lexer lexer;
         public Parser parser;
@@ -51,7 +51,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_5/valid/undefined_missing_return.c";
+            string inputFile = "../../../stage_5/valid/assign.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 

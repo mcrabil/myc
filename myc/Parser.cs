@@ -80,7 +80,8 @@ namespace myc
                 }
                 next = lexer.PeekNextToken();
             }
-            if(!hasReturn)
+            //Add in a return for main if one doesn't exist
+            if(!hasReturn && node.tokValue.type == TokenType.Main)
             {
                 ASTNode retNode = new ASTNode();
                 retNode.type = ASTType.Return;
@@ -118,11 +119,12 @@ namespace myc
                 Expect(TokenType.IntKeyword);
                 Token ident = Expect(TokenType.Identifier);
                 next = lexer.PeekNextToken();
-                if(next.type == TokenType.Assignment)
+                if((next.type >= TokenType.Assignment) && (next.type <= TokenType.BitwiseXorAssignment))
                 {
-                    Expect(TokenType.Assignment);
+                    Expect(next.type);
                     node.child = Exp();
                     node.ident = ident;
+                    node.tokValue.type = next.type;
                     node.type = ASTType.Declare;
                     Expect(TokenType.Semi);
                 }
@@ -150,12 +152,14 @@ namespace myc
         {
             ASTNode node = new ASTNode();
             Token next = lexer.PeekNextToken();
-            if (next.type == TokenType.Identifier && lexer.PeekNextToken(2).type == TokenType.Assignment)
+            Token next2 = lexer.PeekNextToken(2);
+            if (next.type == TokenType.Identifier && (next2.type >= TokenType.Assignment) && (next2.type <= TokenType.BitwiseXorAssignment))
             {
                 Expect(TokenType.Identifier);
-                Expect(TokenType.Assignment);
+                Expect(next2.type);
                 node.child = Exp();
                 node.ident = next;
+                node.tokValue.type = next2.type;
                 node.type = ASTType.Assign;
             }
             else

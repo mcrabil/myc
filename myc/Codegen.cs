@@ -54,7 +54,86 @@ namespace myc
                         {
                             Program.Error("Variable undefined");
                         }
+                        if((node.tokValue.type >= TokenType.AdditionAssignment) && (node.tokValue.type <= TokenType.BitwiseXorAssignment))
+                        {
+                            outputStr += "movl " + Program.varmap[node.ident.strval].ToString() + "(%ebp), %eax" + Environment.NewLine;
+                            outputStr += "push %eax" + Environment.NewLine;
+                        }
+
                         Generate(node.child);
+
+                        switch (node.tokValue.type)
+                        {
+                            case TokenType.AdditionAssignment:
+                                {
+                                    outputStr += "pop %ecx" + Environment.NewLine;
+                                    outputStr += "addl %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.MinusAssignment:
+                                {
+                                    outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                                    outputStr += "pop %eax" + Environment.NewLine;
+                                    outputStr += "subl %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.DivisionAssignment:
+                                {
+                                    outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                                    outputStr += "pop %eax" + Environment.NewLine;
+                                    outputStr += "movl $0, %edx" + Environment.NewLine;
+                                    outputStr += "idivl %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.MultiplicationAssignment:
+                                {
+                                    outputStr += "pop %ecx" + Environment.NewLine;
+                                    outputStr += "imul %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.ModuloAssignment:
+                                {
+                                    outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                                    outputStr += "pop %eax" + Environment.NewLine;
+                                    outputStr += "movl $0, %edx" + Environment.NewLine;
+                                    outputStr += "idivl %ecx, %eax" + Environment.NewLine;
+                                    outputStr += "movl %edx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.BitShiftLeftAssignment:
+                                {
+                                    outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                                    outputStr += "pop %eax" + Environment.NewLine;
+                                    outputStr += "shl %cl, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.BitShiftRightAssignment:
+                                {
+                                    outputStr += "movl %eax, %ecx" + Environment.NewLine;
+                                    outputStr += "pop %eax" + Environment.NewLine;
+                                    outputStr += "shr %cl, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.BitwiseAndAssignment:
+                                {
+                                    outputStr += "pop %ecx" + Environment.NewLine;
+                                    outputStr += "andl %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.BitwiseOrAssignment:
+                                {
+                                    outputStr += "pop %ecx" + Environment.NewLine;
+                                    outputStr += "orl %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                            case TokenType.BitwiseXorAssignment:
+                                {
+                                    outputStr += "pop %ecx" + Environment.NewLine;
+                                    outputStr += "xorl %ecx, %eax" + Environment.NewLine;
+                                    break;
+                                }
+                        }
+
                         outputStr += "movl %eax, " + Program.varmap[node.ident.strval].ToString() + "(%ebp)" + Environment.NewLine;
                         break;
                     }

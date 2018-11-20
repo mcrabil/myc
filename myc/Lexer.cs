@@ -91,6 +91,60 @@ namespace myc
                 nextToken.type = TokenType.IntLiteral;
                 nextToken.value = MyAtoi();
             }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "+="))
+            {
+                nextToken.type = TokenType.AdditionAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "-="))
+            {
+                nextToken.type = TokenType.MinusAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "/="))
+            {
+                nextToken.type = TokenType.DivisionAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "*="))
+            {
+                nextToken.type = TokenType.MultiplicationAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 3 < totalTextLen) && string.Equals(text.Substring(textPos, 3), "<<="))
+            {
+                nextToken.type = TokenType.BitShiftLeftAssignment;
+                nextToken.value = 0;
+                textPos += 3;
+            }
+            else if ((textPos + 3 < totalTextLen) && string.Equals(text.Substring(textPos, 3), ">>="))
+            {
+                nextToken.type = TokenType.BitShiftRightAssignment;
+                nextToken.value = 0;
+                textPos += 3;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "&="))
+            {
+                nextToken.type = TokenType.BitwiseAndAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "|="))
+            {
+                nextToken.type = TokenType.BitwiseOrAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "^="))
+            {
+                nextToken.type = TokenType.BitwiseXorAssignment;
+                nextToken.value = 0;
+                textPos += 2;
+            }
             else if (text[textPos] == ';')
             {
                 nextToken.type = TokenType.Semi;

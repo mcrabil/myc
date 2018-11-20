@@ -38,7 +38,20 @@ namespace myc
         BitwiseShiftLeft,
         BitwiseShiftRight,
         Modulo,
+
+        //Assignment Range Start
         Assignment,
+        AdditionAssignment,
+        MinusAssignment,
+        DivisionAssignment,
+        MultiplicationAssignment,
+        ModuloAssignment,
+        BitShiftLeftAssignment,
+        BitShiftRightAssignment,
+        BitwiseAndAssignment,
+        BitwiseOrAssignment,
+        BitwiseXorAssignment,
+        //Assignment Range End 
 
         EOTF,
     };

@@ -56,6 +56,14 @@ namespace myc
             {
                 ident.type = TokenType.Main;
             }
+            else if ((textPos + 2 < totalTextLen) && (stringLen == 2) && string.Equals(text.Substring(textPos, 2), "if"))
+            {
+                ident.type = TokenType.IfKeyword;
+            }
+            else if ((textPos + 4 < totalTextLen) && (stringLen == 4) && string.Equals(text.Substring(textPos, 4), "else"))
+            {
+                ident.type = TokenType.ElseKeyword;
+            }
             else if ((textPos + 6 < totalTextLen) && (stringLen == 6) && string.Equals(text.Substring(textPos, 6), "return"))
             {
                 ident.type = TokenType.Ret;
@@ -298,6 +306,18 @@ namespace myc
             else if (text[textPos] == '=')
             {
                 nextToken.type = TokenType.Assignment;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == ':')
+            {
+                nextToken.type = TokenType.Colon;
+                nextToken.value = 0;
+                textPos++;
+            }
+            else if (text[textPos] == '?')
+            {
+                nextToken.type = TokenType.QuestionMark;
                 nextToken.value = 0;
                 textPos++;
             }

@@ -53,6 +53,11 @@ namespace myc
         BitwiseXorAssignment,
         //Assignment Range End 
 
+        IfKeyword,
+        ElseKeyword,
+        Colon,
+        QuestionMark,
+
         EOTF,
     };
 

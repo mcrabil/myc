@@ -4,6 +4,7 @@ namespace myc
 {
     public class Codegen
     {
+        public int branchCounterLabel = 0;
         public string outputStr = "";
 
         public void Generate(ASTNode node)
@@ -144,6 +145,37 @@ namespace myc
                             Program.Error("Undeclared var");
                         }
                         outputStr += "movl " + Program.varmap[node.tokValue.strval].ToString() + "(%ebp), %eax" + Environment.NewLine;
+                        break;
+                    }
+                case ASTType.ConditionalStatement:
+                    {
+                        Generate(node.child);
+                        branchCounterLabel++;
+                        string label = branchCounterLabel.ToString();
+                        outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                        outputStr += "je _branch_" + label + Environment.NewLine;
+                        Generate(node.ifStatement);
+                        outputStr += "jmp _post_conditional_" + label + Environment.NewLine;
+                        outputStr += "_branch_" + label + ":" + Environment.NewLine;
+                        if(node.elseStatement != null)
+                        {
+                            Generate(node.elseStatement);
+                        }
+                        outputStr += "_post_conditional_" + label + ":" + Environment.NewLine;
+                        break;
+                    }
+                case ASTType.ConditionalExpression:
+                    {
+                        Generate(node.child);
+                        branchCounterLabel++;
+                        string label = branchCounterLabel.ToString();
+                        outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                        outputStr += "je _e3_" + label + Environment.NewLine;
+                        Generate(node.ifExpr);
+                        outputStr += "jmp _post_conditional_" + label + Environment.NewLine;
+                        outputStr += "_e3_" + label + ":" + Environment.NewLine;
+                        Generate(node.elseExpr);
+                        outputStr += "_post_conditional_" + label + ":" + Environment.NewLine;
                         break;
                     }
                 case ASTType.BinOp:
@@ -300,7 +332,7 @@ namespace myc
                     }
                 default:
                     {
-                        Console.WriteLine("Unsupported AST Type!!!" + Environment.NewLine);
+                        Console.WriteLine("CodeGen: Unsupported AST Type!!!" + Environment.NewLine);
                         break;
                     }
             }

@@ -9,7 +9,7 @@ namespace myc
     class Program
     {
         //TODO: week 5
-        //Comma opeerators, increment/decrement operators
+        //Comma operators, increment/decrement operators
 
         public Lexer lexer;
         public Parser parser;
@@ -51,7 +51,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_5/valid/assign.c";
+            string inputFile = "../../../stage_6/valid/if_nested.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 
@@ -69,6 +69,10 @@ namespace myc
             if (args.Length >= 2)
             {
                 System.IO.File.WriteAllText(args[1], prog.codegen.outputStr);
+            }
+            else
+            {
+                Console.WriteLine(prog.codegen.outputStr);
             }
 
             Console.WriteLine("Parsed successfully!" + Environment.NewLine);

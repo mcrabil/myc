@@ -7,12 +7,15 @@ namespace myc
     {
         /*
             <program> ::= <function>
-            <function> ::= "int" <id> "(" ")" "{" { <statement> } "}"
+            <function> ::= "int" <id> "(" ")" "{" { <block-item> } "}"
+            <block-item> ::= <statement> | <declaration>
             <statement> ::= "return" <exp> ";"
                           | <exp> ";"
-                          | "int" <id> [ = <exp> ] ";"
-            <exp> ::= <id> "=" <exp> | <logical-or-exp>
-            <logical-or-exp> ::= <logical-and-exp> { "||" <logical-and-exp> }
+                          | "if" "(" <exp> ")" <statement> [ "else" <statement> ]
+            <declaration> ::= "int" <id> [ = <exp> ] ";"
+            <exp> ::= <id> "=" <exp> | <conditional-exp>
+            <conditional-exp> ::= <logical-or-exp> [ "?" <exp> ":" <conditional-exp> ]
+            <logical-or-exp> ::= <logical-and-exp> { "||" <logical-and-exp> } 
             <logical-and-exp> ::= <bitwise-or-exp> { "&&" <bitwise-or-exp> }
             <bitwise-or-exp> ::= <bitwise-xor-exp> { "|" <bitwise-xor-exp> }
             <bitwise-xor-exp> ::= <bitwise-and-exp> { "^" <bitwise-and-exp> }
@@ -55,7 +58,7 @@ namespace myc
             Token next = lexer.PeekNextToken();
             while(next.type != TokenType.RBrace)
             {
-                ASTNode stmt = Statement();
+                ASTNode stmt = BlockItem();
                 node.statements.Add(stmt);
                 if(stmt.type == ASTType.Declare)
                 {
@@ -100,6 +103,22 @@ namespace myc
             return node;
         }
 
+        private ASTNode BlockItem()
+        {
+            Token next = lexer.PeekNextToken();
+            ASTNode node = new ASTNode();
+            if (next.type == TokenType.IntKeyword)
+            {
+                node = VarDeclaration();
+            }
+            else
+            {
+                node = Statement();
+            }
+
+            return node;
+        }
+
         private ASTNode Statement()
         {
             Token next = lexer.PeekNextToken();
@@ -114,7 +133,35 @@ namespace myc
 
                 Expect(TokenType.Semi);
             }
-            else if (next.type == TokenType.IntKeyword)
+            else if (next.type == TokenType.IfKeyword)
+            {
+                Expect(TokenType.IfKeyword);
+                Expect(TokenType.LParen);
+                node.type = ASTType.ConditionalStatement;
+                node.child = Exp();
+                Expect(TokenType.RParen);
+                node.ifStatement = Statement();
+                next = lexer.PeekNextToken();
+                if(next.type == TokenType.ElseKeyword)
+                {
+                    Expect(TokenType.ElseKeyword);
+                    node.elseStatement = Statement();
+                }
+            }
+            else
+            {
+                node = Exp();
+                Expect(TokenType.Semi);
+            }
+
+            return node;
+        }
+
+        private ASTNode VarDeclaration()
+        {
+            Token next = lexer.PeekNextToken();
+            ASTNode node = new ASTNode();
+            if (next.type == TokenType.IntKeyword)
             {
                 Expect(TokenType.IntKeyword);
                 Token ident = Expect(TokenType.Identifier);
@@ -141,8 +188,7 @@ namespace myc
             }
             else
             {
-                node = Exp();
-                Expect(TokenType.Semi);
+                Program.Error();
             }
 
             return node;
@@ -164,7 +210,30 @@ namespace myc
             }
             else
             {
-                node = LogicalOrExp();
+                node = ConditionalExp();
+            }
+            return node;
+        }
+
+        private ASTNode ConditionalExp()
+        {
+            ASTNode node = new ASTNode();
+            ASTNode logicalOrExp = LogicalOrExp();
+            Token next = lexer.PeekNextToken();
+            if (next.type == TokenType.QuestionMark)
+            {
+                Expect(TokenType.QuestionMark);
+                ASTNode ifExp = Exp();
+                Expect(TokenType.Colon);
+                ASTNode elseExp = ConditionalExp();
+                node.child = logicalOrExp;
+                node.type = ASTType.ConditionalExpression;
+                node.ifExpr = ifExp;
+                node.elseExpr = elseExp;
+            }
+            else
+            {
+                node = logicalOrExp;
             }
             return node;
         }
@@ -423,7 +492,7 @@ namespace myc
                     }
                 default:
                     {
-                        Console.WriteLine("Unsupported AST Type!!!" + Environment.NewLine);
+                        Console.WriteLine("PrettyPrint: Unsupported AST Type!!!" + Environment.NewLine);
                         break;
                     }
             }

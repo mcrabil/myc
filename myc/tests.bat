@@ -61,7 +61,18 @@ REM FOR %%i IN (..\..\..\stage_5\invalid\*) DO (
 REM     ECHO %%i
 REM     myc.exe %%i
 REM )
-REM echo Invalid Stage 5 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_6\valid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Valid Stage 6 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_6\invalid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Invalid Stage 6 End
 
 REM ------------------- Stage 1 Test -------------------------
 
@@ -311,59 +322,150 @@ REM ..\..\..\test\precedence_4.exe
 REM echo expected 1
 REM echo %ERRORLEVEL%
 
-REM ------------------- Stage 4 Test -------------------------
+REM ------------------- Stage 5 Test -------------------------
 
-myc.exe ..\..\..\stage_5\valid\assign.c ..\..\..\test\assign.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\assign.s -o ..\..\..\test\assign.exe
-..\..\..\test\assign.exe
-echo expected 2
-echo %ERRORLEVEL%
+REM myc.exe ..\..\..\stage_5\valid\assign.c ..\..\..\test\assign.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\assign.s -o ..\..\..\test\assign.exe
+REM ..\..\..\test\assign.exe
+REM echo expected 2
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\assign_val.c ..\..\..\test\assign_val.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\assign_val.s -o ..\..\..\test\assign_val.exe
+REM ..\..\..\test\assign_val.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\exp_return_val.c ..\..\..\test\exp_return_val.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\exp_return_val.s -o ..\..\..\test\exp_return_val.exe
+REM ..\..\..\test\exp_return_val.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\initialize.c ..\..\..\test\initialize.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\initialize.s -o ..\..\..\test\initialize.exe
+REM ..\..\..\test\initialize.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\multiple_vars.c ..\..\..\test\multiple_vars.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\multiple_vars.s -o ..\..\..\test\multiple_vars.exe
+REM ..\..\..\test\multiple_vars.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\no_initialize.c ..\..\..\test\no_initialize.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\no_initialize.s -o ..\..\..\test\no_initialize.exe
+REM ..\..\..\test\no_initialize.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\refer.c ..\..\..\test\refer.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\refer.s -o ..\..\..\test\refer.exe
+REM ..\..\..\test\refer.exe
+REM echo expected 2
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\undefined_missing_return.c ..\..\..\test\undefined_missing_return.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\undefined_missing_return.s -o ..\..\..\test\undefined_missing_return.exe
+REM ..\..\..\test\undefined_missing_return.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_5\valid\unused_exp.c ..\..\..\test\unused_exp.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\unused_exp.s -o ..\..\..\test\unused_exp.exe
+REM ..\..\..\test\unused_exp.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
 
-myc.exe ..\..\..\stage_5\valid\assign_val.c ..\..\..\test\assign_val.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\assign_val.s -o ..\..\..\test\assign_val.exe
-..\..\..\test\assign_val.exe
-echo expected 0
-echo %ERRORLEVEL%
+REM ------------------- Stage 5 Test -------------------------
 
-myc.exe ..\..\..\stage_5\valid\exp_return_val.c ..\..\..\test\exp_return_val.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\exp_return_val.s -o ..\..\..\test\exp_return_val.exe
-..\..\..\test\exp_return_val.exe
-echo expected 0
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_5\valid\initialize.c ..\..\..\test\initialize.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\initialize.s -o ..\..\..\test\initialize.exe
-..\..\..\test\initialize.exe
-echo expected 0
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_5\valid\multiple_vars.c ..\..\..\test\multiple_vars.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\multiple_vars.s -o ..\..\..\test\multiple_vars.exe
-..\..\..\test\multiple_vars.exe
-echo expected 3
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_5\valid\no_initialize.c ..\..\..\test\no_initialize.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\no_initialize.s -o ..\..\..\test\no_initialize.exe
-..\..\..\test\no_initialize.exe
-echo expected 0
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_5\valid\refer.c ..\..\..\test\refer.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\refer.s -o ..\..\..\test\refer.exe
-..\..\..\test\refer.exe
-echo expected 2
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_5\valid\undefined_missing_return.c ..\..\..\test\undefined_missing_return.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\undefined_missing_return.s -o ..\..\..\test\undefined_missing_return.exe
-..\..\..\test\undefined_missing_return.exe
-echo expected 0
-echo %ERRORLEVEL%
-
-myc.exe ..\..\..\stage_5\valid\unused_exp.c ..\..\..\test\unused_exp.s
-i686-w64-mingw32-gcc -m32 ..\..\..\test\unused_exp.s -o ..\..\..\test\unused_exp.exe
-..\..\..\test\unused_exp.exe
-echo expected 0
-echo %ERRORLEVEL%
-
+REM myc.exe ..\..\..\stage_6\valid\assign_ternary.c ..\..\..\test\assign_ternary.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\assign_ternary.s -o ..\..\..\test\assign_ternary.exe
+REM ..\..\..\test\assign_ternary.exe
+REM echo expected 2
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\else.c ..\..\..\test\else.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\else.s -o ..\..\..\test\else.exe
+REM ..\..\..\test\else.exe
+REM echo expected 2
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_nested.c ..\..\..\test\if_nested.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_nested.s -o ..\..\..\test\if_nested.exe
+REM ..\..\..\test\if_nested.exe
+REM echo expected 1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_nested_2.c ..\..\..\test\if_nested_2.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_nested_2.s -o ..\..\..\test\if_nested_2.exe
+REM ..\..\..\test\if_nested_2.exe
+REM echo expected 2
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_nested_3.c ..\..\..\test\if_nested_3.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_nested_3.s -o ..\..\..\test\if_nested_3.exe
+REM ..\..\..\test\if_nested_3.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_nested_4.c ..\..\..\test\if_nested_4.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_nested_4.s -o ..\..\..\test\if_nested_4.exe
+REM ..\..\..\test\if_nested_4.exe
+REM echo expected 4
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_nested_5.c ..\..\..\test\if_nested_5.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_nested_5.s -o ..\..\..\test\if_nested_5.exe
+REM ..\..\..\test\if_nested_5.exe
+REM echo expected 1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_not_taken.c ..\..\..\test\if_not_taken.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_not_taken.s -o ..\..\..\test\if_not_taken.exe
+REM ..\..\..\test\if_not_taken.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\if_taken.c ..\..\..\test\if_taken.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\if_taken.s -o ..\..\..\test\if_taken.exe
+REM ..\..\..\test\if_taken.exe
+REM echo expected 1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\multiple_if.c ..\..\..\test\multiple_if.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\multiple_if.s -o ..\..\..\test\multiple_if.exe
+REM ..\..\..\test\multiple_if.exe
+REM echo expected 8
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\multiple_ternary.c ..\..\..\test\multiple_ternary.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\multiple_ternary.s -o ..\..\..\test\multiple_ternary.exe
+REM ..\..\..\test\multiple_ternary.exe
+REM echo expected 10
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\nested_ternary.c ..\..\..\test\nested_ternary.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\nested_ternary.s -o ..\..\..\test\nested_ternary.exe
+REM ..\..\..\test\nested_ternary.exe
+REM echo expected 7
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\nested_ternary_2.c ..\..\..\test\nested_ternary_2.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\nested_ternary_2.s -o ..\..\..\test\nested_ternary_2.exe
+REM ..\..\..\test\nested_ternary_2.exe
+REM echo expected 15
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\rh_assignment.c ..\..\..\test\rh_assignment.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\rh_assignment.s -o ..\..\..\test\rh_assignment.exe
+REM ..\..\..\test\rh_assignment.exe
+REM echo expected 1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_6\valid\ternary.c ..\..\..\test\ternary.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\ternary.s -o ..\..\..\test\ternary.exe
+REM ..\..\..\test\ternary.exe
+REM echo expected 4
+REM echo %ERRORLEVEL%

@@ -14,6 +14,8 @@ namespace myc
         Declare,
         Assign,
         Var,
+        ConditionalStatement,
+        ConditionalExpression,
         BinOp,
         UnOp,
         Constant,
@@ -33,6 +35,14 @@ namespace myc
         public ASTNode left;
         public Token op;
         public ASTNode right;
+
+        //Conditional statements
+        public ASTNode ifStatement;
+        public ASTNode elseStatement;
+
+        //Conditional expressions
+        public ASTNode ifExpr;
+        public ASTNode elseExpr;
 
         //Assign
         public Token ident;

@@ -12,6 +12,7 @@ namespace myc
             <statement> ::= "return" <exp> ";"
                           | <exp> ";"
                           | "if" "(" <exp> ")" <statement> [ "else" <statement> ]
+                          | "{" { <block-item> } "}
             <declaration> ::= "int" <id> [ = <exp> ] ";"
             <exp> ::= <id> "=" <exp> | <conditional-exp>
             <conditional-exp> ::= <logical-or-exp> [ "?" <exp> ":" <conditional-exp> ]
@@ -43,6 +44,8 @@ namespace myc
 
         private ASTNode FunctionDeclaration()
         {
+            Program.varmap.Add(new Dictionary<string, int>());
+            Program.scopeidx++;
             bool hasReturn = false;
             ASTNode node = new ASTNode();
             node.type = ASTType.Function;
@@ -54,26 +57,25 @@ namespace myc
             Expect(TokenType.RParen);
             Expect(TokenType.LBrace);
 
-            node.statements = new List<ASTNode>();
+            node.block_items = new List<ASTNode>();
             Token next = lexer.PeekNextToken();
             while(next.type != TokenType.RBrace)
             {
                 ASTNode stmt = BlockItem();
-                node.statements.Add(stmt);
+                node.block_items.Add(stmt);
                 if(stmt.type == ASTType.Declare)
                 {
-                    if (Program.varmap.ContainsKey(stmt.ident.strval))
+                    if (Program.varmap[Program.scopeidx].ContainsKey(stmt.ident.strval))
                     {
-                        Program.Error("There was already a variable declared " + stmt.tokValue.strval);
+                        Program.Error("There was already a variable declared " + stmt.ident.strval);
                     }
-                    Program.varmap.Add(stmt.ident.strval, Program.varidx);
-                    Program.varidx -= 4;
+                    Program.varmap[Program.scopeidx].Add(stmt.ident.strval, Program.NextVarMapIdx());
                 }
                 else if(stmt.type == ASTType.Assign)
                 {
-                    if (!Program.varmap.ContainsKey(stmt.ident.strval))
+                    if (!Program.VarMapContainsVar(stmt.ident.strval))
                     {
-                        Program.Error("Variable has not been declared " + stmt.tokValue.strval);
+                        Program.Error("Variable has not been declared " + stmt.ident.strval);
                     }
 
                 }
@@ -95,10 +97,12 @@ namespace myc
                 retNode.child.tokValue = new Token();
                 retNode.child.tokValue.type = TokenType.IntLiteral;
                 retNode.child.tokValue.value = 0;
-                node.statements.Add(retNode);
+                node.block_items.Add(retNode);
             }
 
             Expect(TokenType.RBrace);
+            Program.varmap.RemoveAt(Program.scopeidx);
+            Program.scopeidx--;
 
             return node;
         }
@@ -147,6 +151,39 @@ namespace myc
                     Expect(TokenType.ElseKeyword);
                     node.elseStatement = Statement();
                 }
+            }
+            else if (next.type == TokenType.LBrace)
+            {
+                Program.varmap.Add(new Dictionary<string, int>());
+                Program.scopeidx++;
+                Expect(TokenType.LBrace);
+                node.type = ASTType.Compound;
+                node.block_items = new List<ASTNode>();
+                while(next.type != TokenType.RBrace)
+                {
+                    ASTNode stmt = BlockItem();
+                    node.block_items.Add(stmt);
+                    if(stmt.type == ASTType.Declare)
+                    {
+                        if (Program.varmap[Program.scopeidx].ContainsKey(stmt.ident.strval))
+                        {
+                            Program.Error("There was already a variable declared " + stmt.ident.strval);
+                        }
+                        Program.varmap[Program.scopeidx].Add(stmt.ident.strval, Program.NextVarMapIdx());
+                    }
+                    else if(stmt.type == ASTType.Assign)
+                    {
+                        if (!Program.VarMapContainsVar(stmt.ident.strval))
+                        {
+                            Program.Error("Variable has not been declared " + stmt.ident.strval);
+                        }
+
+                    }
+                    next = lexer.PeekNextToken();
+                }
+                Expect(TokenType.RBrace);
+                Program.varmap.RemoveAt(Program.scopeidx);
+                Program.scopeidx--;
             }
             else
             {

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace myc
 {
@@ -10,14 +7,51 @@ namespace myc
     {
         //TODO: week 5
         //Comma operators, increment/decrement operators
+        //TODO: week 7
+        //Update parsing error name to start with syntax_error. Should pull out the error handling.
 
         public Lexer lexer;
         public Parser parser;
         public Codegen codegen;
 
         //Variable map
-        public static Dictionary<string, int> varmap = new Dictionary<string, int>();
-        public static int varidx = -4;
+        public static List<Dictionary<string, int>> varmap = new List<Dictionary<string, int>>();
+        public static int scopeidx = -1;
+
+        public static int NextVarMapIdx()
+        {
+            int count = 1;
+            foreach (var map in varmap)
+            {
+                count += map.Count;
+            }
+            return (-4 * count);
+        }
+
+        public static bool VarMapContainsVar(string key)
+        {
+            foreach(var map in varmap)
+            {
+                if (map.ContainsKey(key))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static string VarMapLookup(string key)
+        {
+            int len = Program.varmap.Count - 1;
+            for (int i = len; i >= 0; i--)
+            {
+                if(Program.varmap[i].ContainsKey(key))
+                {
+                    return Program.varmap[i][key].ToString();
+                }
+            }
+            return "";
+        }
 
         public static void Error()
         {
@@ -51,7 +85,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_6/valid/if_nested.c";
+            string inputFile = "../../../stage_7/valid/consecutive_declarations.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 
@@ -62,6 +96,12 @@ namespace myc
             //prog.lexer.PrintAllTokens();
 
             ASTNode node = prog.parser.Prog();
+
+            if(Program.varmap.Count > 0)
+            {
+                Error("Internal error: Varmap count was greater than 0");
+            }
+
             prog.codegen.Generate(node);
 
             //prog.parser.PrettyPrintAST(node);
@@ -72,7 +112,7 @@ namespace myc
             }
             else
             {
-                Console.WriteLine(prog.codegen.outputStr);
+                //Console.WriteLine(prog.codegen.outputStr);
             }
 
             Console.WriteLine("Parsed successfully!" + Environment.NewLine);

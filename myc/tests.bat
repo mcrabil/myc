@@ -73,6 +73,18 @@ REM     ECHO %%i
 REM     myc.exe %%i
 REM )
 REM echo Invalid Stage 6 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_7\valid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Valid Stage 7 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_7\invalid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Invalid Stage 7 End
 
 REM ------------------- Stage 1 Test -------------------------
 
@@ -378,7 +390,7 @@ REM ..\..\..\test\unused_exp.exe
 REM echo expected 0
 REM echo %ERRORLEVEL%
 
-REM ------------------- Stage 5 Test -------------------------
+REM ------------------- Stage 6 Test -------------------------
 
 REM myc.exe ..\..\..\stage_6\valid\assign_ternary.c ..\..\..\test\assign_ternary.s
 REM i686-w64-mingw32-gcc -m32 ..\..\..\test\assign_ternary.s -o ..\..\..\test\assign_ternary.exe
@@ -461,11 +473,62 @@ REM
 REM myc.exe ..\..\..\stage_6\valid\rh_assignment.c ..\..\..\test\rh_assignment.s
 REM i686-w64-mingw32-gcc -m32 ..\..\..\test\rh_assignment.s -o ..\..\..\test\rh_assignment.exe
 REM ..\..\..\test\rh_assignment.exe
+
 REM echo expected 1
 REM echo %ERRORLEVEL%
 REM 
 REM myc.exe ..\..\..\stage_6\valid\ternary.c ..\..\..\test\ternary.s
 REM i686-w64-mingw32-gcc -m32 ..\..\..\test\ternary.s -o ..\..\..\test\ternary.exe
 REM ..\..\..\test\ternary.exe
+REM echo expected 4
+REM echo %ERRORLEVEL%
+
+REM ------------------- Stage 7 Test -------------------------
+
+REM myc.exe ..\..\..\stage_7\valid\consecutive_blocks.c ..\..\..\test\consecutive_blocks.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\consecutive_blocks.s -o ..\..\..\test\consecutive_blocks.exe
+REM ..\..\..\test\consecutive_blocks.exe
+REM echo expected 1
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\consecutive_declarations.c ..\..\..\test\consecutive_declarations.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\consecutive_declarations.s -o ..\..\..\test\consecutive_declarations.exe
+REM ..\..\..\test\consecutive_declarations.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\declare_after_block.c ..\..\..\test\declare_after_block.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\declare_after_block.s -o ..\..\..\test\declare_after_block.exe
+REM ..\..\..\test\declare_after_block.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\declare_block.c ..\..\..\test\declare_block.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\declare_block.s -o ..\..\..\test\declare_block.exe
+REM ..\..\..\test\declare_block.exe
+REM echo expected 0
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\declare_late.c ..\..\..\test\declare_late.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\declare_late.s -o ..\..\..\test\declare_late.exe
+REM ..\..\..\test\declare_late.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\multi_nesting.c ..\..\..\test\multi_nesting.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\multi_nesting.s -o ..\..\..\test\multi_nesting.exe
+REM ..\..\..\test\multi_nesting.exe
+REM echo expected 3
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\nested_if.c ..\..\..\test\nested_if.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\nested_if.s -o ..\..\..\test\nested_if.exe
+REM ..\..\..\test\nested_if.exe
+REM echo expected 4
+REM echo %ERRORLEVEL%
+REM 
+REM myc.exe ..\..\..\stage_7\valid\nested_scope.c ..\..\..\test\nested_scope.s
+REM i686-w64-mingw32-gcc -m32 ..\..\..\test\nested_scope.s -o ..\..\..\test\nested_scope.exe
+REM ..\..\..\test\nested_scope.exe
 REM echo expected 4
 REM echo %ERRORLEVEL%

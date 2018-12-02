@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace myc
 {
@@ -24,10 +25,15 @@ namespace myc
                         outputStr += "push %ebp" + Environment.NewLine;
                         outputStr += "movl %esp, %ebp" + Environment.NewLine;
 
-                        foreach(var statement in node.statements)
+                        Program.varmap.Add(new Dictionary<string, int>());
+                        Program.scopeidx++;
+                        foreach(var block_item in node.block_items)
                         {
-                            Generate(statement);
+                            Generate(block_item);
                         }
+                        outputStr += "addl $" + (4 * Program.varmap[Program.scopeidx].Count).ToString() + ", %esp" + Environment.NewLine; 
+                        Program.varmap.RemoveAt(Program.scopeidx);
+                        Program.scopeidx--;
                         break;
                     }
                 case ASTType.Return:
@@ -41,6 +47,12 @@ namespace myc
                     }
                 case ASTType.Declare:
                     {
+                        if (Program.varmap[Program.scopeidx].ContainsKey(node.ident.strval))
+                        {
+                            Program.Error("There was already a variable declared " + node.ident.strval);
+                        }
+                        Program.varmap[Program.scopeidx].Add(node.ident.strval, Program.NextVarMapIdx());
+
                         if(node.child != null)
                         {
                             Generate(node.child);
@@ -51,13 +63,13 @@ namespace myc
                     }
                 case ASTType.Assign:
                     {
-                        if(!Program.varmap.ContainsKey(node.ident.strval))
+                        if (!Program.VarMapContainsVar(node.ident.strval))
                         {
-                            Program.Error("Variable undefined");
+                            Program.Error("Variable has not been declared " + node.ident.strval);
                         }
                         if((node.tokValue.type >= TokenType.AdditionAssignment) && (node.tokValue.type <= TokenType.BitwiseXorAssignment))
                         {
-                            outputStr += "movl " + Program.varmap[node.ident.strval].ToString() + "(%ebp), %eax" + Environment.NewLine;
+                            outputStr += "movl " + Program.VarMapLookup(node.ident.strval) + "(%ebp), %eax" + Environment.NewLine;
                             outputStr += "push %eax" + Environment.NewLine;
                         }
 
@@ -135,16 +147,29 @@ namespace myc
                                 }
                         }
 
-                        outputStr += "movl %eax, " + Program.varmap[node.ident.strval].ToString() + "(%ebp)" + Environment.NewLine;
+                        outputStr += "movl %eax, " + Program.VarMapLookup(node.ident.strval) + "(%ebp)" + Environment.NewLine;
                         break;
                     }
                 case ASTType.Var:
                     {
-                        if(!Program.varmap.ContainsKey(node.tokValue.strval))
+                        if (!Program.VarMapContainsVar(node.tokValue.strval))
                         {
-                            Program.Error("Undeclared var");
+                            Program.Error("Variable has not been declared " + node.tokValue.strval);
                         }
-                        outputStr += "movl " + Program.varmap[node.tokValue.strval].ToString() + "(%ebp), %eax" + Environment.NewLine;
+                        outputStr += "movl " + Program.VarMapLookup(node.tokValue.strval) + "(%ebp), %eax" + Environment.NewLine;
+                        break;
+                    }
+                case ASTType.Compound:
+                    {
+                        Program.varmap.Add(new Dictionary<string, int>());
+                        Program.scopeidx++;
+                        foreach(var block_item in node.block_items)
+                        {
+                            Generate(block_item);
+                        }
+                        outputStr += "addl $" + (4 * Program.varmap[Program.scopeidx].Count).ToString() + ", %esp" + Environment.NewLine; 
+                        Program.varmap.RemoveAt(Program.scopeidx);
+                        Program.scopeidx--;
                         break;
                     }
                 case ASTType.ConditionalStatement:

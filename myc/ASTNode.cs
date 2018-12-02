@@ -16,6 +16,7 @@ namespace myc
         Var,
         ConditionalStatement,
         ConditionalExpression,
+        Compound,
         BinOp,
         UnOp,
         Constant,
@@ -28,8 +29,8 @@ namespace myc
         public ASTNode child;
         public Token tokValue;
 
-        //Function
-        public List<ASTNode> statements;
+        //Function or Compound
+        public List<ASTNode> block_items;
 
         //Binary Ops
         public ASTNode left;

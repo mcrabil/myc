@@ -19,6 +19,12 @@ namespace myc
         Compound,
         BinOp,
         UnOp,
+        NullStatement,
+        ForStatement,
+        WhileStatement,
+        DoStatement,
+        Break,
+        Continue,
         Constant,
     };
 
@@ -44,6 +50,20 @@ namespace myc
         //Conditional expressions
         public ASTNode ifExpr;
         public ASTNode elseExpr;
+
+        //For loops
+        public ASTNode forInitial;
+        public ASTNode forCondition;
+        public ASTNode forPostExpr;
+        public ASTNode forBody;
+
+        //While loops
+        public ASTNode whileCondition;
+        public ASTNode whileBody;
+
+        //Do loops
+        public ASTNode doCondition;
+        public ASTNode doBody;
 
         //Assign
         public Token ident;

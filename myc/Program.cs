@@ -10,6 +10,10 @@ namespace myc
         //TODO: week 7
         //Update parsing error name to start with syntax_error. Should pull out the error handling.
 
+        //Make a better testing system.
+
+        //Week 8: work on codegen
+
         public Lexer lexer;
         public Parser parser;
         public Codegen codegen;
@@ -85,7 +89,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_7/valid/consecutive_declarations.c";
+            string inputFile = "../../../stage_8/valid/break.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 

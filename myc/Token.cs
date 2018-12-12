@@ -55,6 +55,11 @@ namespace myc
 
         IfKeyword,
         ElseKeyword,
+        ForKeyword,
+        WhileKeyword,
+        DoKeyword,
+        BreakKeyword,
+        ContinueKeyword,
         Colon,
         QuestionMark,
 

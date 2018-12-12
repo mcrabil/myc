@@ -10,9 +10,16 @@ namespace myc
             <function> ::= "int" <id> "(" ")" "{" { <block-item> } "}"
             <block-item> ::= <statement> | <declaration>
             <statement> ::= "return" <exp> ";"
-                          | <exp> ";"
+                          | <exp-option> ";"
                           | "if" "(" <exp> ")" <statement> [ "else" <statement> ]
                           | "{" { <block-item> } "}
+                          | "for" "(" <exp-option> ";" <exp-option> ";" <exp-option> ")" <statement>
+                          | "for" "(" <declaration> <exp-option> ";" <exp-option> ")" <statement>
+                          | "while" "(" <exp> ")" <statement>
+                          | "do" <statement> "while" <exp> ";"
+                          | "break" ";"
+                          | "continue" ";"
+            <exp-option> ::= <exp> | ""
             <declaration> ::= "int" <id> [ = <exp> ] ";"
             <exp> ::= <id> "=" <exp> | <conditional-exp>
             <conditional-exp> ::= <logical-or-exp> [ "?" <exp> ":" <conditional-exp> ]
@@ -159,6 +166,7 @@ namespace myc
                 Expect(TokenType.LBrace);
                 node.type = ASTType.Compound;
                 node.block_items = new List<ASTNode>();
+                next = lexer.PeekNextToken();
                 while(next.type != TokenType.RBrace)
                 {
                     ASTNode stmt = BlockItem();
@@ -184,6 +192,108 @@ namespace myc
                 Expect(TokenType.RBrace);
                 Program.varmap.RemoveAt(Program.scopeidx);
                 Program.scopeidx--;
+            }
+            else if (next.type == TokenType.ForKeyword)
+            {
+                Expect(TokenType.ForKeyword);
+                Expect(TokenType.LParen);
+                node.type = ASTType.ForStatement;
+
+                //Initial exp/decl
+                next = lexer.PeekNextToken();
+                if (next.type == TokenType.IntKeyword)
+                {
+                    node.type = ASTType.ForStatement;
+                    node.forInitial = VarDeclaration();
+                }
+                else if (next.type == TokenType.Semi)
+                {
+                    ASTNode constNode = new ASTNode();
+                    constNode.type = ASTType.Constant;
+                    constNode.tokValue = new Token();
+                    constNode.tokValue.value = 1;
+                    node.forInitial = constNode;
+                    Expect(TokenType.Semi);
+                }
+                else
+                {
+                    node.forInitial = Exp();
+                    Expect(TokenType.Semi);
+                }
+
+                //For loop condition
+                next = lexer.PeekNextToken();
+                if (next.type == TokenType.Semi)
+                {
+                    ASTNode constNode = new ASTNode();
+                    constNode.type = ASTType.Constant;
+                    constNode.tokValue = new Token();
+                    constNode.tokValue.value = 1;
+                    node.forCondition = constNode;
+                    Expect(TokenType.Semi);
+                }
+                else
+                {
+                    node.forCondition = Exp();
+                    Expect(TokenType.Semi);
+                }
+
+                //For loop post expr
+                next = lexer.PeekNextToken();
+                if (next.type == TokenType.RParen)
+                {
+                    ASTNode constNode = new ASTNode();
+                    constNode.type = ASTType.Constant;
+                    constNode.tokValue = new Token();
+                    constNode.tokValue.value = 1;
+                    node.forPostExpr = constNode;
+                    Expect(TokenType.RParen);
+                }
+                else
+                {
+                    node.forPostExpr = Exp();
+                    Expect(TokenType.RParen);
+                }
+
+                node.forBody = Statement();
+            }
+            else if (next.type == TokenType.WhileKeyword)
+            {
+                Expect(TokenType.WhileKeyword);
+                Expect(TokenType.LParen);
+                node.type = ASTType.WhileStatement;
+
+                //While loop condition
+                node.whileCondition = Exp();
+                Expect(TokenType.RParen);
+
+                node.whileBody = Statement();
+            }
+            else if (next.type == TokenType.DoKeyword)
+            {
+                Expect(TokenType.DoKeyword);
+                node.doBody = Statement();
+                node.type = ASTType.DoStatement;
+                Expect(TokenType.WhileKeyword);
+                node.doCondition = Exp();
+                Expect(TokenType.Semi);
+            }
+            else if (next.type == TokenType.BreakKeyword)
+            {
+                Expect(TokenType.BreakKeyword);
+                Expect(TokenType.Semi);
+                node.type = ASTType.Break;
+            }
+            else if (next.type == TokenType.ContinueKeyword)
+            {
+                Expect(TokenType.ContinueKeyword);
+                Expect(TokenType.Semi);
+                node.type = ASTType.Continue;
+            }
+            else if (next.type == TokenType.Semi)
+            {
+                node.type = ASTType.NullStatement;
+                Expect(TokenType.Semi);
             }
             else
             {

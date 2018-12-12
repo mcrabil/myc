@@ -8,6 +8,19 @@ namespace myc
         public int branchCounterLabel = 0;
         public string outputStr = "";
 
+        public void ScopeBegin()
+        {
+            Program.varmap.Add(new Dictionary<string, int>());
+            Program.scopeidx++;
+        }
+
+        public void ScopeEnd()
+        {
+            outputStr += "addl $" + (4 * Program.varmap[Program.scopeidx].Count).ToString() + ", %esp" + Environment.NewLine; 
+            Program.varmap.RemoveAt(Program.scopeidx);
+            Program.scopeidx--;
+        }
+
         public void Generate(ASTNode node)
         {
             switch (node.type)
@@ -25,15 +38,13 @@ namespace myc
                         outputStr += "push %ebp" + Environment.NewLine;
                         outputStr += "movl %esp, %ebp" + Environment.NewLine;
 
-                        Program.varmap.Add(new Dictionary<string, int>());
-                        Program.scopeidx++;
+                        ScopeBegin();
                         foreach(var block_item in node.block_items)
                         {
                             Generate(block_item);
                         }
-                        outputStr += "addl $" + (4 * Program.varmap[Program.scopeidx].Count).ToString() + ", %esp" + Environment.NewLine; 
-                        Program.varmap.RemoveAt(Program.scopeidx);
-                        Program.scopeidx--;
+
+                        ScopeEnd();
                         break;
                     }
                 case ASTType.Return:
@@ -161,15 +172,12 @@ namespace myc
                     }
                 case ASTType.Compound:
                     {
-                        Program.varmap.Add(new Dictionary<string, int>());
-                        Program.scopeidx++;
+                        ScopeBegin();
                         foreach(var block_item in node.block_items)
                         {
                             Generate(block_item);
                         }
-                        outputStr += "addl $" + (4 * Program.varmap[Program.scopeidx].Count).ToString() + ", %esp" + Environment.NewLine; 
-                        Program.varmap.RemoveAt(Program.scopeidx);
-                        Program.scopeidx--;
+                        ScopeEnd();
                         break;
                     }
                 case ASTType.ConditionalStatement:
@@ -178,15 +186,15 @@ namespace myc
                         branchCounterLabel++;
                         string label = branchCounterLabel.ToString();
                         outputStr += "cmpl $0, %eax" + Environment.NewLine;
-                        outputStr += "je _branch_" + label + Environment.NewLine;
+                        outputStr += "je _elsebranch_" + label + Environment.NewLine;
                         Generate(node.ifStatement);
-                        outputStr += "jmp _post_conditional_" + label + Environment.NewLine;
-                        outputStr += "_branch_" + label + ":" + Environment.NewLine;
+                        outputStr += "jmp _post_conditional_stmt_" + label + Environment.NewLine;
+                        outputStr += "_elsebranch_" + label + ":" + Environment.NewLine;
                         if(node.elseStatement != null)
                         {
                             Generate(node.elseStatement);
                         }
-                        outputStr += "_post_conditional_" + label + ":" + Environment.NewLine;
+                        outputStr += "_post_conditional_stmt_" + label + ":" + Environment.NewLine;
                         break;
                     }
                 case ASTType.ConditionalExpression:
@@ -195,12 +203,12 @@ namespace myc
                         branchCounterLabel++;
                         string label = branchCounterLabel.ToString();
                         outputStr += "cmpl $0, %eax" + Environment.NewLine;
-                        outputStr += "je _e3_" + label + Environment.NewLine;
+                        outputStr += "je _else_" + label + Environment.NewLine;
                         Generate(node.ifExpr);
-                        outputStr += "jmp _post_conditional_" + label + Environment.NewLine;
-                        outputStr += "_e3_" + label + ":" + Environment.NewLine;
+                        outputStr += "jmp _post_conditional_expr_" + label + Environment.NewLine;
+                        outputStr += "_else_" + label + ":" + Environment.NewLine;
                         Generate(node.elseExpr);
-                        outputStr += "_post_conditional_" + label + ":" + Environment.NewLine;
+                        outputStr += "_post_conditional_expr_" + label + ":" + Environment.NewLine;
                         break;
                     }
                 case ASTType.BinOp:
@@ -346,6 +354,64 @@ namespace myc
                             outputStr += "movl $0, %eax" + Environment.NewLine;
                             outputStr += "sete %al" + Environment.NewLine;
                         }
+                        break;
+                    }
+                case ASTType.WhileStatement:
+                    {
+                        branchCounterLabel++;
+                        string label = branchCounterLabel.ToString();
+                        outputStr += "_while_start_" + label + ":" + Environment.NewLine;
+                        Generate(node.whileCondition);
+                        outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                        outputStr += "je _while_end" + label + Environment.NewLine;
+                        Generate(node.whileBody);
+                        outputStr += "jmp _while_start_" + label + Environment.NewLine;
+                        outputStr += "_while_end" + label + ":" + Environment.NewLine;
+                        break;
+                    }
+                case ASTType.DoStatement:
+                    {
+                        branchCounterLabel++;
+                        string label = branchCounterLabel.ToString();
+                        outputStr += "_do_start_" + label + ":" + Environment.NewLine;
+                        Generate(node.doBody);
+                        Generate(node.doCondition);
+                        outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                        outputStr += "jne _do_start" + label + Environment.NewLine;
+                        break;
+                    }
+                case ASTType.ForStatement:
+                    {
+                        ScopeBegin();
+
+                        branchCounterLabel++;
+                        string label = branchCounterLabel.ToString();
+                        Generate(node.forInitial);
+                        outputStr += "_for_start_" + label + ":" + Environment.NewLine;
+                        Generate(node.forCondition);
+                        outputStr += "cmpl $0, %eax" + Environment.NewLine;
+                        outputStr += "je _for_end" + label + Environment.NewLine;
+                        Generate(node.forBody);
+                        Generate(node.forPostExpr);
+                        outputStr += "jmp _for_start_" + label + Environment.NewLine;
+                        outputStr += "_for_end" + label + ":" + Environment.NewLine;
+
+                        ScopeEnd();
+                        break;
+                    }
+                case ASTType.Break:
+                    {
+                        //TODO: implement!
+                        break;
+                    }
+                case ASTType.Continue:
+                    {
+                        //TODO: implement!
+                        break;
+                    }
+                case ASTType.NullStatement:
+                    {
+                        //Don't do anything!
                         break;
                     }
                 case ASTType.Constant:

@@ -87,6 +87,36 @@ namespace myc
                 nextToken.type = TokenType.EOTF;
                 nextToken.value = 0;
             }
+            else if ((textPos + 3 < totalTextLen) && string.Equals(text.Substring(textPos, 3), "for"))
+            {
+                nextToken.type = TokenType.ForKeyword;
+                nextToken.value = 0;
+                textPos += 3;
+            }
+            else if ((textPos + 5 < totalTextLen) && string.Equals(text.Substring(textPos, 5), "while"))
+            {
+                nextToken.type = TokenType.AdditionAssignment;
+                nextToken.value = 0;
+                textPos += 5;
+            }
+            else if ((textPos + 2 < totalTextLen) && string.Equals(text.Substring(textPos, 2), "do"))
+            {
+                nextToken.type = TokenType.DoKeyword;
+                nextToken.value = 0;
+                textPos += 2;
+            }
+            else if ((textPos + 5 < totalTextLen) && string.Equals(text.Substring(textPos, 5), "break"))
+            {
+                nextToken.type = TokenType.BreakKeyword;
+                nextToken.value = 0;
+                textPos += 5;
+            }
+            else if ((textPos + 8 < totalTextLen) && string.Equals(text.Substring(textPos, 8), "continue"))
+            {
+                nextToken.type = TokenType.ContinueKeyword;
+                nextToken.value = 0;
+                textPos += 8;
+            }
             else if (Char.IsLetter(text[textPos]))
             {
                 Token ident = GetIdentifier();

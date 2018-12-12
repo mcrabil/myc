@@ -85,6 +85,18 @@ REM     ECHO %%i
 REM     myc.exe %%i
 REM )
 REM echo Invalid Stage 7 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_8\valid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Valid Stage 8 End
+REM echo --------------
+REM FOR %%i IN (..\..\..\stage_8\invalid\*) DO (
+REM     ECHO %%i
+REM     myc.exe %%i
+REM )
+REM echo Invalid Stage 8 End
 
 REM ------------------- Stage 1 Test -------------------------
 
@@ -532,3 +544,12 @@ REM i686-w64-mingw32-gcc -m32 ..\..\..\test\nested_scope.s -o ..\..\..\test\nest
 REM ..\..\..\test\nested_scope.exe
 REM echo expected 4
 REM echo %ERRORLEVEL%
+
+REM ------------------- Stage 8 Test -------------------------
+
+myc.exe ..\..\..\stage_8\valid\break.c ..\..\..\test\break.s
+i686-w64-mingw32-gcc -m32 ..\..\..\test\break.s -o ..\..\..\test\break.exe
+..\..\..\test\break.exe
+echo expected 0
+echo %ERRORLEVEL%
+REM 

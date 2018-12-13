@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_6\invalid\if_assignment.c
+THERE WAS AN ERROR PARSING
+

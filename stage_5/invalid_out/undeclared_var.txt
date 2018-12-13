@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_5\invalid\undeclared_var.c
+Variable has not been declared a
+

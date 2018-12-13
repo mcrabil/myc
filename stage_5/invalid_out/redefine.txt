@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_5\invalid\redefine.c
+There was already a variable declared a
+

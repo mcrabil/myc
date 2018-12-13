@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_7\invalid\out_of_scope.c
+Variable has not been declared a
+

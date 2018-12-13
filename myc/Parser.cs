@@ -46,6 +46,8 @@ namespace myc
             node.type = ASTType.Program;
             node.child = FunctionDeclaration();
 
+            Expect(TokenType.EOTF);
+
             return node;
         }
 

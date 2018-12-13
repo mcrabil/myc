@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_5\invalid\syntax_err_bad_decl_2.c
+THERE WAS AN ERROR PARSING
+

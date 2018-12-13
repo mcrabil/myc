@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_1\invalid\no_space.c
+Variable has not been declared return0
+

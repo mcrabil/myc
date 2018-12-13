@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_5\invalid\var_declared_late.c
+Variable has not been declared a
+

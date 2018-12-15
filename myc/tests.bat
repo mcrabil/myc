@@ -5,9 +5,10 @@ REM Run from the bin\Debug\ folder
 
 REM Run to populate valid tests
 FOR %%k IN (valid) DO (
-    FOR %%j IN (1, 2, 3, 4, 5, 6, 7) DO (
+    FOR %%j IN (8) DO (
         echo --------------
         FOR %%i IN (..\..\..\stage_%%j\%%k\*.c) DO (
+            echo %%i
             myc.exe ..\..\..\stage_%%j\%%k\%%~ni.c ..\..\..\test\%%~ni.s > nul
             i686-w64-mingw32-gcc -m32 ..\..\..\test\%%~ni.s -o ..\..\..\test\%%~ni.exe
             if not exist ..\..\..\stage_%%j\%%k_out\ mkdir ..\..\..\stage_%%j\%%k_out\ 
@@ -22,7 +23,7 @@ FOR %%k IN (valid) DO (
 
 REM Run to populate invalid tests
 REM FOR %%k IN (invalid) DO (
-REM     FOR %%j IN (1, 2, 3, 4, 5, 6, 7) DO (
+REM     FOR %%j IN (8) DO (
 REM         echo --------------
 REM         FOR %%i IN (..\..\..\stage_%%j\%%k\*.c) DO (
 REM             if not exist ..\..\..\stage_%%j\%%k_out\ mkdir ..\..\..\stage_%%j\%%k_out\ 
@@ -34,7 +35,7 @@ REM )
 
 REM Run to validate valid tests
 REM FOR %%k IN (valid) DO (
-REM     FOR %%j IN (1, 2, 3, 4, 5, 6, 7) DO (
+REM     FOR %%j IN (1, 2, 3, 4, 5, 6, 7, 8) DO (
 REM         echo --------------
 REM         FOR %%i IN (..\..\..\stage_%%j\%%k\*.c) DO (
 REM             myc.exe ..\..\..\stage_%%j\%%k\%%~ni.c ..\..\..\test\%%~ni.s > nul
@@ -56,7 +57,7 @@ REM )
 
 REM Run to validate invalid tests
 REM FOR %%k IN (invalid) DO (
-REM     FOR %%j IN (1, 2, 3, 4, 5, 6, 7) DO (
+REM     FOR %%j IN (1, 2, 3, 4, 5, 6, 7, 8) DO (
 REM         echo --------------
 REM         FOR %%i IN (..\..\..\stage_%%j\%%k\*.c) DO (
 REM             if not exist ..\..\..\stage_%%j\%%k_out\ mkdir ..\..\..\stage_%%j\%%k_out\ 

@@ -21,6 +21,8 @@ namespace myc
         //Variable map
         public static List<Dictionary<string, int>> varmap = new List<Dictionary<string, int>>();
         public static int scopeidx = -1;
+        public static string breakLabel = "";
+        public static string continueLabel = "";
 
         public static int NextVarMapIdx()
         {
@@ -89,7 +91,7 @@ namespace myc
         static void Main(string[] args)
         {
             Program prog = new Program();
-            string inputFile = "../../../stage_8/valid/break.c";
+            string inputFile = "../../../stage_8/valid/continue.c";
             if (args.Length >= 1) { inputFile = args[0]; }
             Console.WriteLine("Using input file: " + inputFile);
 

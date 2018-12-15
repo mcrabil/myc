@@ -95,7 +95,7 @@ namespace myc
             }
             else if ((textPos + 5 < totalTextLen) && string.Equals(text.Substring(textPos, 5), "while"))
             {
-                nextToken.type = TokenType.AdditionAssignment;
+                nextToken.type = TokenType.WhileKeyword;
                 nextToken.value = 0;
                 textPos += 5;
             }

@@ -1,0 +1,3 @@
+Using input file: ..\..\..\stage_8\invalid\out_of_scope_do_while.c
+Variable has not been declared a
+

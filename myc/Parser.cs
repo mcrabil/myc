@@ -39,6 +39,18 @@ namespace myc
 
         public Lexer lexer = null;
 
+        public void ScopeBegin()
+        {
+            Program.varmap.Add(new Dictionary<string, int>());
+            Program.scopeidx++;
+        }
+
+        public void ScopeEnd()
+        {
+            Program.varmap.RemoveAt(Program.scopeidx);
+            Program.scopeidx--;
+        }
+
 
         public ASTNode Prog()
         {
@@ -53,8 +65,7 @@ namespace myc
 
         private ASTNode FunctionDeclaration()
         {
-            Program.varmap.Add(new Dictionary<string, int>());
-            Program.scopeidx++;
+            ScopeBegin();
             bool hasReturn = false;
             ASTNode node = new ASTNode();
             node.type = ASTType.Function;
@@ -110,8 +121,7 @@ namespace myc
             }
 
             Expect(TokenType.RBrace);
-            Program.varmap.RemoveAt(Program.scopeidx);
-            Program.scopeidx--;
+            ScopeEnd();
 
             return node;
         }
@@ -163,8 +173,7 @@ namespace myc
             }
             else if (next.type == TokenType.LBrace)
             {
-                Program.varmap.Add(new Dictionary<string, int>());
-                Program.scopeidx++;
+                ScopeBegin();
                 Expect(TokenType.LBrace);
                 node.type = ASTType.Compound;
                 node.block_items = new List<ASTNode>();
@@ -192,11 +201,11 @@ namespace myc
                     next = lexer.PeekNextToken();
                 }
                 Expect(TokenType.RBrace);
-                Program.varmap.RemoveAt(Program.scopeidx);
-                Program.scopeidx--;
+                ScopeEnd();
             }
             else if (next.type == TokenType.ForKeyword)
             {
+                ScopeBegin();
                 Expect(TokenType.ForKeyword);
                 Expect(TokenType.LParen);
                 node.type = ASTType.ForStatement;
@@ -221,6 +230,23 @@ namespace myc
                 {
                     node.forInitial = Exp();
                     Expect(TokenType.Semi);
+                }
+
+                if(node.forInitial.type == ASTType.Declare)
+                {
+                    if (Program.varmap[Program.scopeidx].ContainsKey(node.forInitial.ident.strval))
+                    {
+                        Program.Error("There was already a variable declared " + node.forInitial.ident.strval);
+                    }
+                    Program.varmap[Program.scopeidx].Add(node.forInitial.ident.strval, Program.NextVarMapIdx());
+                }
+                else if(node.forInitial.type == ASTType.Assign)
+                {
+                    if (!Program.VarMapContainsVar(node.forInitial.ident.strval))
+                    {
+                        Program.Error("Variable has not been declared " + node.forInitial.ident.strval);
+                    }
+
                 }
 
                 //For loop condition
@@ -258,6 +284,7 @@ namespace myc
                 }
 
                 node.forBody = Statement();
+                ScopeEnd();
             }
             else if (next.type == TokenType.WhileKeyword)
             {

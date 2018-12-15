@@ -360,24 +360,37 @@ namespace myc
                     {
                         branchCounterLabel++;
                         string label = branchCounterLabel.ToString();
+                        Program.breakLabel = "_while_end_" + label + Environment.NewLine;
+                        Program.continueLabel = "_while_start_" + label + Environment.NewLine;
+
                         outputStr += "_while_start_" + label + ":" + Environment.NewLine;
                         Generate(node.whileCondition);
                         outputStr += "cmpl $0, %eax" + Environment.NewLine;
-                        outputStr += "je _while_end" + label + Environment.NewLine;
+                        outputStr += "je _while_end_" + label + Environment.NewLine;
                         Generate(node.whileBody);
                         outputStr += "jmp _while_start_" + label + Environment.NewLine;
-                        outputStr += "_while_end" + label + ":" + Environment.NewLine;
+                        outputStr += "_while_end_" + label + ":" + Environment.NewLine;
+
+                        Program.breakLabel = "";
+                        Program.continueLabel = "";
                         break;
                     }
                 case ASTType.DoStatement:
                     {
                         branchCounterLabel++;
                         string label = branchCounterLabel.ToString();
+                        Program.breakLabel = "_do_end_" + label + Environment.NewLine;
+                        Program.continueLabel = "_do_start_" + label + Environment.NewLine;
+
                         outputStr += "_do_start_" + label + ":" + Environment.NewLine;
                         Generate(node.doBody);
                         Generate(node.doCondition);
                         outputStr += "cmpl $0, %eax" + Environment.NewLine;
-                        outputStr += "jne _do_start" + label + Environment.NewLine;
+                        outputStr += "jne _do_start_" + label + Environment.NewLine;
+                        outputStr += "_do_end_" + label + ":" + Environment.NewLine;
+
+                        Program.breakLabel = "";
+                        Program.continueLabel = "";
                         break;
                     }
                 case ASTType.ForStatement:
@@ -386,27 +399,47 @@ namespace myc
 
                         branchCounterLabel++;
                         string label = branchCounterLabel.ToString();
+                        Program.breakLabel = "_for_end_" + label + Environment.NewLine;
+                        Program.continueLabel = "_for_postexpr_" + label + Environment.NewLine;
+
                         Generate(node.forInitial);
                         outputStr += "_for_start_" + label + ":" + Environment.NewLine;
                         Generate(node.forCondition);
                         outputStr += "cmpl $0, %eax" + Environment.NewLine;
-                        outputStr += "je _for_end" + label + Environment.NewLine;
+                        outputStr += "je _for_end_" + label + Environment.NewLine;
                         Generate(node.forBody);
+                        outputStr += "_for_postexpr_" + label + ":" + Environment.NewLine;
                         Generate(node.forPostExpr);
                         outputStr += "jmp _for_start_" + label + Environment.NewLine;
-                        outputStr += "_for_end" + label + ":" + Environment.NewLine;
+                        outputStr += "_for_end_" + label + ":" + Environment.NewLine;
 
+                        Program.breakLabel = "";
+                        Program.continueLabel = "";
                         ScopeEnd();
                         break;
                     }
                 case ASTType.Break:
                     {
-                        //TODO: implement!
+                        if (Program.breakLabel != "")
+                        {
+                            outputStr += "jmp " + Program.breakLabel;
+                        }
+                        else
+                        {
+                            Program.Error("Break statement must be in an interation statement");
+                        }
                         break;
                     }
                 case ASTType.Continue:
                     {
-                        //TODO: implement!
+                        if (Program.continueLabel != "")
+                        {
+                            outputStr += "jmp " + Program.continueLabel;
+                        }
+                        else
+                        {
+                            Program.Error("Break statement must be in an interation statement");
+                        }
                         break;
                     }
                 case ASTType.NullStatement:
